@@ -18,7 +18,7 @@ class ExpectMinMaxAi(AiAbc):
         return best_movement
 
     @staticmethod
-    def __expect_min_max__(board, depth, is_move):
+    def __expect_min_max__(board: Board, depth: int, is_move: bool) -> float:
         if board.is_game_over or depth == 0:
             return board.score
         elif is_move:
@@ -30,14 +30,14 @@ class ExpectMinMaxAi(AiAbc):
             mean_alpha = 0
             zeros = np.argwhere(board.grid == 0)
             for zero in zeros:
-                grid_with_two = copy.deepcopy(board.grid)
-                grid_with_two[zero[0]][zero[1]] = 2
+                grid_two = copy.deepcopy(board.grid)
+                grid_two[zero[0]][zero[1]] = 2
 
-                grid_with_four = copy.deepcopy(board.grid)
-                grid_with_four[zero[0]][zero[1]] = 4
+                grid_four = copy.deepcopy(board.grid)
+                grid_four[zero[0]][zero[1]] = 4
 
-                mean_alpha += .9 * ExpectMinMaxAi.__expect_min_max__(Board(grid_with_two, board.score), depth - 1, True)
-                mean_alpha += .1 * ExpectMinMaxAi.__expect_min_max__(Board(grid_with_four, board.score), depth - 1, True)
+                mean_alpha += .9 * ExpectMinMaxAi.__expect_min_max__(Board(grid_two, board.score), depth - 1, True)
+                mean_alpha += .1 * ExpectMinMaxAi.__expect_min_max__(Board(grid_four, board.score), depth - 1, True)
 
             mean_alpha = mean_alpha / zeros.shape[0]
             return mean_alpha

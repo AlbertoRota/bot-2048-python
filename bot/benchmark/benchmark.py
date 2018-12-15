@@ -1,5 +1,6 @@
 import sys
 import time
+from collections import Counter
 
 import numpy as np
 from bot.ai.ai_abc import AiAbc
@@ -12,6 +13,7 @@ class Benchmark(object):
     def run(ai: AiAbc, max_runs: int = 100, max_secs: int = 300):
         accumulated_score = 0
         accumulated_moves = 0
+        max_tiles = Counter()
         runs = 0
         secs = 0
 
@@ -35,9 +37,13 @@ class Benchmark(object):
             secs += time.time() - start_time
             accumulated_score += board.score
             accumulated_moves += num_of_movements
+            max_tiles[max(map(max, board.grid))] += 1
 
         print("Runs: " + str(runs))
         print("Secs: " + str(secs))
         print("Avg score: " + str(accumulated_score / runs))
         print("Avg moves: " + str(accumulated_moves / runs))
         print("Moves per sec: " + str(accumulated_moves / secs))
+        print("Max tile distribution: ")
+        for number, times in max_tiles.items():
+            print(str(number) + ": " + str(times))
