@@ -1,8 +1,8 @@
 from abc import ABC
-import bot.game.game as Game
+from bot.game.board import Board
 
 
 class AiAbc(ABC):
     @staticmethod
-    def get_next_move(game: Game):
+    def get_next_move(board: Board):
         raise NotImplementedError

@@ -1,17 +1,16 @@
-import random
 from bot.ai.ai_abc import AiAbc
-from bot.game.game import Game
+from bot.game.board import Board
 
 
 class OrderedAi(AiAbc):
 
     @staticmethod
-    def get_next_move(game: Game):
-        if "LEFT" in game.valid_moves:
+    def get_next_move(board: Board):
+        if "LEFT" in board.valid_moves:
             return "LEFT"
-        if "UP" in game.valid_moves:
+        if "UP" in board.valid_moves:
             return "UP"
-        if "RIGHT" in game.valid_moves:
+        if "RIGHT" in board.valid_moves:
             return "RIGHT"
         else:
             return "DOWN"

@@ -10,9 +10,12 @@ class Board(object):
     # A relation between swipe direction and number of rotations needed, used in "swipe_grid"
     __direction_to_rotation__ = {"LEFT": 0, "UP": 1, "DOWN": 3, "RIGHT": 2}
 
-    def __init__(self, grid: np.ndarray = np.zeros((4, 4)), score: int = 0):
+    def __init__(self, grid: np.ndarray = np.zeros((4, 4)), score: int = 0, initialize: bool = False):
         # Initialize current grid
         self.grid = grid
+        if initialize:
+            self.grid = Board.__spawn_tile__(self.grid)
+            self.grid = Board.__spawn_tile__(self.grid)
 
         # Pre-calculate valid moves
         self.valid_moves = []
@@ -26,7 +29,7 @@ class Board(object):
         # Set the current score
         self.score = score
 
-    def swipe_grid(self, direction: str) -> Board:
+    def swipe_grid(self, direction: str, spawn_tile: bool = False) -> Board:
         """
         Swipes the grid in the specified direction.
         Once done, return
@@ -37,6 +40,10 @@ class Board(object):
             new_grid[i], score_inc = Board.__swipe_row_left___(row)
             new_score += score_inc
         new_grid = np.rot90(new_grid, 4 - Board.__direction_to_rotation__[direction])
+
+        if spawn_tile:
+            new_grid = Board.__spawn_tile__(new_grid)
+
         return Board(new_grid, new_score)
 
     @staticmethod
@@ -67,12 +74,13 @@ class Board(object):
                     return True
         return False
 
-    def spawn_tile(self) -> Board:
-        new_grid = np.copy(self.grid)
+    @staticmethod
+    def __spawn_tile__(grid: np.ndarray) -> np.ndarray:
+        new_grid = np.copy(grid)
         tile_to_spawn = random.sample([2] * 9 + [4], 1)[0]
 
         zero_index = np.argwhere(new_grid == 0)
         np.random.shuffle(zero_index)
 
         new_grid[zero_index[0][0], zero_index[0][1]] = tile_to_spawn
-        return Board(new_grid, self.score)
+        return new_grid
