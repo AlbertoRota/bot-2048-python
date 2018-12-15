@@ -38,6 +38,12 @@ class Benchmark(object):
             accumulated_score += board.score
             accumulated_moves += num_of_movements
             max_tiles[max(map(max, board.grid))] += 1
+            print("\r", end="", flush=True)
+            print("Played {} games, {:4.2f}%, ETA: {} seconds)".format(
+                runs,
+                100 * runs/max_runs,
+                int((secs / runs) * (max_runs - runs))
+            ), end="", flush=True)
 
         print("Runs: " + str(runs))
         print("Secs: " + str(secs))
