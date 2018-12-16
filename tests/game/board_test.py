@@ -33,11 +33,23 @@ class TestGameMethods(unittest.TestCase):
 
     def test_is_valid_move(self):
         board = Board(np.array([[2, 2, 0, 4], [4, 8, 0, 2], [2, 4, 0, 4], [4, 8, 0, 8]]))
+        board_no_up_no_left = Board(np.array([[2, 4], [4, 0]]))
+        board_no_down_no_right = Board(np.array([[0, 4], [4, 2]]))
 
         self.assertIn("LEFT", board.valid_moves)
         self.assertIn("RIGHT", board.valid_moves)
         self.assertNotIn("DOWN", board.valid_moves)
         self.assertNotIn("UP", board.valid_moves)
+
+        self.assertNotIn("UP", board_no_up_no_left.valid_moves)
+        self.assertNotIn("LEFT", board_no_up_no_left.valid_moves)
+        self.assertIn("RIGHT", board_no_up_no_left.valid_moves)
+        self.assertIn("DOWN", board_no_up_no_left.valid_moves)
+
+        self.assertIn("UP", board_no_down_no_right.valid_moves)
+        self.assertIn("LEFT", board_no_down_no_right.valid_moves)
+        self.assertNotIn("RIGHT", board_no_down_no_right.valid_moves)
+        self.assertNotIn("DOWN", board_no_down_no_right.valid_moves)
 
     def test_is_game_over(self):
         grid_ok = Board(np.array([[2, 2, 0, 4], [4, 8, 0, 2], [2, 4, 0, 4], [4, 8, 0, 8]]))
