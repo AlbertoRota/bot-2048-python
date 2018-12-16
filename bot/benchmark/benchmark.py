@@ -42,15 +42,16 @@ class Benchmark(object):
                 int(((game_secs / runs) * (max_runs - runs)) / mp.cpu_count())
             ), end="", flush=True)
 
+        print("\r", end="", flush=True)
         print("Runs: " + str(runs))
-        print("Real secs: " + str(real_secs))
-        print("Game secs: " + str(game_secs))
-        print("Avg score: " + str(accumulated_score / runs))
-        print("Avg moves: " + str(accumulated_moves / runs))
-        print("Moves per sec: " + str(accumulated_moves / game_secs))
+        print("Real secs: {0:.2f}".format(round(real_secs)))
+        print("Game secs: {0:.2f}".format(round(game_secs)))
+        print("Avg score: {0:.2f}".format(round(accumulated_score / runs)))
+        print("Avg moves: {0:.2f}".format(round(accumulated_moves / runs)))
+        print("Moves per sec: {0:.2f}".format(round(accumulated_moves / game_secs)))
         print("Max tile distribution: ")
         for number, times in sorted(max_tiles.items()):
-            print(str(number) + ": " + str(times))
+            print(str(number) + ": " + str(times) + " - ({0:.2f}%)".format((times/runs)*100))
 
     @staticmethod
     def __run_game__(ai: AiAbc) -> (Board, int, float):
