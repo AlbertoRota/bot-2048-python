@@ -1,3 +1,5 @@
+import multiprocessing as mp
+
 from bot.benchmark.benchmark import Benchmark
 from bot.ai.random_ai import RandomAi
 from bot.ai.ordered_ai import OrderedAi
@@ -6,20 +8,22 @@ from bot.ai.simple_expect_min_max_ai import SimpleExpectMinMaxAi
 
 
 def main():
+    mp.freeze_support()
+
     print("Random AI:")
-    # Benchmark.run(RandomAi)
+    Benchmark.run(RandomAi)
     print()
 
     print("Ordered AI:")
-    # Benchmark.run(OrderedAi)
+    Benchmark.run(OrderedAi)
     print()
 
     print("ExpectMinMax AI:")
-    # Benchmark.run(ExpectMinMaxAi, max_secs=2400)
+    Benchmark.run(ExpectMinMaxAi, max_secs=120)
     print()
 
     print("SimpleExpectMinMax AI:")
-    Benchmark.run(SimpleExpectMinMaxAi, max_runs=4, max_secs=2400)
+    Benchmark.run(SimpleExpectMinMaxAi, max_secs=120)
     print()
 
 

@@ -20,7 +20,7 @@ class Board(object):
         # Pre-calculate valid moves
         self.valid_moves = []
         for move in self.all_moves:
-            if self.__is_valid_move__(move):
+            if Board.__is_valid_move__(self.grid, move):
                 self.valid_moves.append(move)
 
         # Check if the game over, in our case, when we have no further valid moves
@@ -34,12 +34,12 @@ class Board(object):
         Swipes the grid in the specified direction.
         Once done, return
         """
-        new_grid = np.rot90(np.copy(self.grid), Board.__direction_to_rotation__[direction])
+        new_grid = Board.__rotate_grid__(self.grid, Board.__direction_to_rotation__[direction])
         new_score = self.score
         for i, row in enumerate(new_grid):
             new_grid[i], score_inc = Board.__swipe_row_left___(row)
             new_score += score_inc
-        new_grid = np.rot90(new_grid, 4 - Board.__direction_to_rotation__[direction])
+        new_grid = Board.__rotate_grid__(self.grid, Board.__direction_to_rotation__[direction])
 
         if spawn_tile:
             new_grid = Board.__spawn_tile__(new_grid)
@@ -66,9 +66,24 @@ class Board(object):
                     first_free_cell += 1
         return new_row, score_inc
 
-    def __is_valid_move__(self, direction):
-        grid_to_check = np.rot90(self.grid, Board.__direction_to_rotation__[direction])
-        for row in grid_to_check:
+    @staticmethod
+    def __rotate_grid__(grid, times):
+        new_grid = None
+        if times == 0:
+            new_grid = grid
+        elif times == 1:
+            new_grid = grid.T[::-1]
+        elif times == 2:
+            new_grid = grid[::-1, ::-1]
+        elif times == 3:
+            new_grid = grid.T[:, ::-1]
+        else:
+            raise NotImplementedError("Only values between 0 and 3 are supported.")
+        return new_grid
+
+    @staticmethod
+    def __is_valid_move__(grid: np.ndarray, direction: str):
+        for row in Board.__rotate_grid__(grid, Board.__direction_to_rotation__[direction]):
             for x, y in zip(row[:-1], row[1:]):
                 if y != 0 and (x == y or x == 0):
                     return True
