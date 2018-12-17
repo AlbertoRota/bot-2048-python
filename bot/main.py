@@ -19,11 +19,11 @@ def main():
     print()
 
     print("ExpectMinMax AI:")
-    Benchmark.run(ExpectMinMaxAi, max_secs=120)
+    Benchmark.run(ExpectMinMaxAi, max_secs=240)
     print()
 
     print("SimpleExpectMinMax AI:")
-    Benchmark.run(SimpleExpectMinMaxAi, max_secs=120)
+    Benchmark.run(SimpleExpectMinMaxAi, max_secs=240)
     print()
 
 

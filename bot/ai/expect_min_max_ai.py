@@ -2,6 +2,7 @@ import copy
 import numpy as np
 from bot.ai.ai_abc import AiAbc
 from bot.game.board import Board
+from bot.fitness.fitness import Fitness
 
 
 class ExpectMinMaxAi(AiAbc):
@@ -20,7 +21,7 @@ class ExpectMinMaxAi(AiAbc):
     @staticmethod
     def __expect_min_max__(board: Board, depth: int, is_move: bool) -> float:
         if board.is_game_over or depth == 0:
-            return board.score
+            return Fitness.get_fitness(board)
         elif is_move:
             max_alpha = -float("inf")
             for move in board.valid_moves:
