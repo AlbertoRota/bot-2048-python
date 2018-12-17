@@ -10,7 +10,7 @@ from bot.game.board import Board
 class Benchmark(object):
 
     @staticmethod
-    def run(ai: AiAbc, max_runs: int = 100, max_secs: int = 300):
+    def run(ai: AiAbc, max_runs: int = 100, max_secs: int = 300, parallel: bool = True):
         accumulated_score = 0
         accumulated_moves = 0
         max_tiles = Counter()
@@ -18,11 +18,18 @@ class Benchmark(object):
         real_secs = 0
         game_secs = 0
 
-        pool = mp.Pool(mp.cpu_count())
+        if parallel:
+            pool = mp.Pool(mp.cpu_count())
+
         while runs < max_runs and real_secs <= max_secs:
             real_start = time.time()
-            results = [pool.apply_async(Benchmark.__run_game__, args=(ai,)) for _ in range(mp.cpu_count())]
-            outputs = [p.get() for p in results]
+
+            if parallel:
+                results = [pool.apply_async(Benchmark.__run_game__, args=(ai,)) for _ in range(mp.cpu_count())]
+                outputs = [p.get() for p in results]
+            else:
+                outputs = [Benchmark.__run_game__(ai)]
+
             real_secs += time.time() - real_start
 
             for output in outputs:

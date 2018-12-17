@@ -10,20 +10,20 @@ from bot.ai.simple_expect_min_max_ai import SimpleExpectMinMaxAi
 def main():
     mp.freeze_support()
 
-    print("Random AI:")
-    Benchmark.run(RandomAi)
-    print()
-
-    print("Ordered AI:")
-    Benchmark.run(OrderedAi)
-    print()
-
-    print("ExpectMinMax AI:")
-    Benchmark.run(ExpectMinMaxAi, max_secs=120)
-    print()
+    # print("Random AI:")
+    # Benchmark.run(RandomAi)
+    # print()
+    #
+    # print("Ordered AI:")
+    # Benchmark.run(OrderedAi)
+    # print()
+    #
+    # print("ExpectMinMax AI:")
+    # Benchmark.run(ExpectMinMaxAi, max_secs=240)
+    # print()
 
     print("SimpleExpectMinMax AI:")
-    Benchmark.run(SimpleExpectMinMaxAi, max_secs=120)
+    Benchmark.run(SimpleExpectMinMaxAi, max_secs=60, parallel=False)
     print()
 
 

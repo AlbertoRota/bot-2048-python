@@ -2,6 +2,7 @@ import copy
 import numpy as np
 from bot.ai.ai_abc import AiAbc
 from bot.game.board import Board
+from bot.fitness.fitness import Fitness
 
 
 class SimpleExpectMinMaxAi(AiAbc):
@@ -20,14 +21,14 @@ class SimpleExpectMinMaxAi(AiAbc):
     @staticmethod
     def __expect_min_max__(board: Board, depth: int, is_move: bool) -> float:
         if board.is_game_over or depth == 0:
-            return board.score
+            return Fitness.get_fitness(board)
         elif is_move:
             max_alpha = -float("inf")
             for move in board.valid_moves:
                 max_alpha = max(max_alpha, SimpleExpectMinMaxAi.__expect_min_max__(board.swipe_grid(move), depth - 1, False))
             return max_alpha
         else:
-            mean_alpha = 0
+            mean_alpha = 0.
             zeros = np.argwhere(board.grid == 0)
             if len(zeros) > 4:
                 zeros = zeros[np.random.randint(zeros.shape[0], size=4), :]
