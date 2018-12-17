@@ -18,7 +18,7 @@ class TestGameMethods(unittest.TestCase):
         expected_grid_down = [[0, 0, 0, 0], [0, 2, 0, 0], [2, 4, 0, 0], [4, 2, 4, 8]]
         expected_score_down = 4
         expected_grid_right = [[0, 0, 0, 4], [0, 0, 0, 0], [0, 0, 2, 4], [0, 4, 4, 8]]
-        expected_score_rigth = 8
+        expected_score_right = 8
         expected_grid_up = [[4, 2, 4, 8], [2, 4, 0, 0], [0, 2, 0, 0], [0, 0, 0, 0]]
         expected_score_up = 4
 
@@ -27,7 +27,7 @@ class TestGameMethods(unittest.TestCase):
         np.testing.assert_array_equal(board.swipe_grid("DOWN").grid, expected_grid_down)
         self.assertEqual(board.swipe_grid("DOWN").score, expected_score_down)
         np.testing.assert_array_equal(board.swipe_grid("RIGHT").grid, expected_grid_right)
-        self.assertEqual(board.swipe_grid("RIGHT").score, expected_score_rigth)
+        self.assertEqual(board.swipe_grid("RIGHT").score, expected_score_right)
         np.testing.assert_array_equal(board.swipe_grid("UP").grid, expected_grid_up)
         self.assertEqual(board.swipe_grid("UP").score, expected_score_up)
 
