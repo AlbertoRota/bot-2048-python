@@ -39,7 +39,7 @@ class Board(object):
         for i, row in enumerate(new_grid):
             new_grid[i], score_inc = Board.__swipe_row_left___(row)
             new_score += score_inc
-        new_grid = Board.__rotate_grid__(self.grid, Board.__direction_to_rotation__[direction])
+        new_grid = Board.__rotate_grid__(new_grid, 4 - Board.__direction_to_rotation__[direction])
 
         if spawn_tile:
             new_grid = Board.__spawn_tile__(new_grid)
@@ -68,17 +68,17 @@ class Board(object):
 
     @staticmethod
     def __rotate_grid__(grid, times):
-        new_grid = None
-        if times == 0:
-            new_grid = grid
+        new_grid = np.copy(grid)
+        if times == 0 or times == 4:
+            new_grid = new_grid
         elif times == 1:
-            new_grid = grid.T[::-1]
+            new_grid = new_grid.T[::-1]
         elif times == 2:
-            new_grid = grid[::-1, ::-1]
+            new_grid = new_grid[::-1, ::-1]
         elif times == 3:
-            new_grid = grid.T[:, ::-1]
+            new_grid = new_grid.T[:, ::-1]
         else:
-            raise NotImplementedError("Only values between 0 and 3 are supported.")
+            raise NotImplementedError("Only values between 0 and 4 are supported.")
         return new_grid
 
     @staticmethod
