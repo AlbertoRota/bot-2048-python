@@ -28,7 +28,7 @@ class SimpleExpectMinMaxAi(AiAbc):
                 max_alpha = max(max_alpha, SimpleExpectMinMaxAi.__expect_min_max__(board.swipe_grid(move), depth - 1, False))
             return max_alpha
         else:
-            mean_alpha = 0
+            mean_alpha = 0.
             zeros = np.argwhere(board.grid == 0)
             if len(zeros) > 4:
                 zeros = zeros[np.random.randint(zeros.shape[0], size=4), :]

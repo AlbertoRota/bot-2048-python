@@ -13,5 +13,6 @@ class Fitness:
             snake.extend(reversed(col) if i % 2 == 0 else col)
 
         m = max(snake)
+
         return sum(x / 10 ** n for n, x in enumerate(snake)) - \
                math.pow((board.grid[3][0] != m) * abs(board.grid[3][0] - m), 2)

@@ -28,7 +28,7 @@ class ExpectMinMaxAi(AiAbc):
                 max_alpha = max(max_alpha, ExpectMinMaxAi.__expect_min_max__(board.swipe_grid(move), depth - 1, False))
             return max_alpha
         else:
-            mean_alpha = 0
+            mean_alpha = 0.
             zeros = np.argwhere(board.grid == 0)
             for zero in zeros:
                 grid_two = copy.deepcopy(board.grid)
