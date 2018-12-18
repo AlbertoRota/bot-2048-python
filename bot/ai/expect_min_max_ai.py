@@ -1,4 +1,3 @@
-import copy
 import itertools
 from bot.ai.ai_abc import AiAbc
 from bot.game.board import Board
@@ -34,10 +33,10 @@ class ExpectMinMaxAi(AiAbc):
             rows, cols = list(range(len(grid))), list(range(len(grid[0])))
             for i, j in itertools.product(rows, cols):
                 if grid[i][j] == 0:
-                    grid_two = copy.deepcopy(grid)
+                    grid_two = grid.copy()
                     grid_two[i][j] = 2
 
-                    grid_four = copy.deepcopy(grid)
+                    grid_four = grid.copy()
                     grid_four[i][j] = 4
 
                     mean_alpha += .9 * ExpectMinMaxAi.__expect_min_max__(Board(grid_two, board.score), depth - 1, True)

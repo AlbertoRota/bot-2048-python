@@ -8,11 +8,14 @@ class Fitness:
         if board.is_game_over:
             return -float("inf")
 
-        snake = []
+        sum_score, max_tile, size = 0, 0, len(board.grid)
         for i, col in enumerate(zip(*board.grid)):
-            snake.extend(reversed(col) if i % 2 == 0 else col)
+            new_col = reversed(col) if i % 2 == 0 else col
+            for j, tile in enumerate(new_col):
+                if tile > max_tile:
+                    max_tile = tile
+                sum_score += tile / 10 ** (i * size + j)
 
-        m = max(snake)
+        score2 = sum_score - math.pow((board.grid[3][0] != max_tile) * abs(board.grid[3][0] - max_tile), 2)
 
-        return sum(x / 10 ** n for n, x in enumerate(snake)) - \
-               math.pow((board.grid[3][0] != m) * abs(board.grid[3][0] - m), 2)
+        return score2

@@ -15,23 +15,23 @@ def main():
     # print("Random AI:")
     # Benchmark.run(RandomAi, max_secs=60)
     # print()
-    #
+
     # print("Ordered AI:")
     # Benchmark.run(OrderedAi, max_secs=60)
     # print()
 
-    print("Greedy AI:")
-    Benchmark.run(GreedyAi, max_secs=60, parallel=False)
-    print()
+    # print("Greedy AI:")
+    # Benchmark.run(GreedyAi, max_secs=60, parallel=False)
+    # print()
 
     # print("ExpectMinMax AI:")
     # Benchmark.run(ExpectMinMaxAi, max_secs=60)
     # print()
-    #
-    # print("SimpleExpectMinMax AI:")
-    # Benchmark.run(SimpleExpectMinMaxAi, max_secs=60)
-    # print()
-    #
+
+    print("SimpleExpectMinMax AI:")
+    Benchmark.run(SimpleExpectMinMaxAi, max_secs=60, parallel=False)
+    print()
+
     # print("MonteCarlo AI:")
     # Benchmark.run(MonteCarloAi, max_secs=60)
     # print()

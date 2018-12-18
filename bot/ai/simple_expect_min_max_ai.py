@@ -1,4 +1,3 @@
-import copy
 import itertools
 import random
 from bot.ai.ai_abc import AiAbc
@@ -38,7 +37,7 @@ class SimpleExpectMinMaxAi(AiAbc):
 
             for i, j in itertools.product(rows, cols):
                 if num_of_zeros < 4 and grid[i][j] == 0:
-                    grid_two = copy.deepcopy(grid)
+                    grid_two = grid.copy()
                     grid_two[i][j] = 2
                     num_of_zeros += 1
 

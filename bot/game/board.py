@@ -19,10 +19,7 @@ class Board(object):
             self.grid = Board.__spawn_tile__(self.grid)
 
         # Pre-calculate valid moves
-        self.valid_moves = []
-        for move in self.all_moves:
-            if Board.__is_valid_move__(self.grid, move):
-                self.valid_moves.append(move)
+        self.valid_moves = Board.__get_valid_moves__(self.grid)
 
         # Check if the game over, in our case, when we have no further valid moves
         self.is_game_over = not bool(self.valid_moves)
@@ -68,7 +65,7 @@ class Board(object):
         return new_row, score_inc
 
     @staticmethod
-    def __rotate_grid__(grid: [[int]], times: int):
+    def __rotate_grid__(grid: [[int]], times: int) -> [[int]]:
         if times == 0 or times == 4:
             new_grid = grid.copy()
         elif times == 1:
@@ -85,13 +82,45 @@ class Board(object):
         return new_grid
 
     @staticmethod
-    def __is_valid_move__(grid: [[int]], direction: str):
-        for row in Board.__rotate_grid__(grid, Board.__direction_to_rotation__[direction]):
+    def __get_valid_moves__(grid: [[int]]) -> [str]:
+        valid_moves = {}
+        for row in grid:
             for i in range(len(row) - 1):
                 first_tile, second_tile = row[i], row[i + 1]
-                if second_tile != 0 and (first_tile == second_tile or first_tile == 0):
-                    return True
-        return False
+                if first_tile != 0:
+                    if first_tile == second_tile:
+                        valid_moves["LEFT"] = True
+                        valid_moves["RIGHT"] = True
+                        break
+
+                if first_tile != 0 and second_tile == 0:
+                    valid_moves["RIGHT"] = True
+
+                if second_tile != 0 and first_tile == 0:
+                    valid_moves["LEFT"] = True
+
+            if "LEFT" in valid_moves and "RIGHT" in valid_moves:
+                break
+
+        for row in Board.__rotate_grid__(grid, 1):
+            for i in range(len(row) - 1):
+                first_tile, second_tile = row[i], row[i + 1]
+                if first_tile != 0:
+                    if first_tile == second_tile:
+                        valid_moves["UP"] = True
+                        valid_moves["DOWN"] = True
+                        break
+
+                if first_tile != 0 and second_tile == 0:
+                    valid_moves["UP"] = True
+
+                if second_tile != 0 and first_tile == 0:
+                    valid_moves["DOWN"] = True
+
+            if "UP" in valid_moves and "DOWN" in valid_moves:
+                break
+
+        return list(valid_moves.keys())
 
     @staticmethod
     def __spawn_tile__(grid: [[int]]) -> [[int]]:
