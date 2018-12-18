@@ -1,5 +1,6 @@
 import copy
-import numpy as np
+import itertools
+import random
 from bot.ai.ai_abc import AiAbc
 from bot.game.board import Board
 from bot.fitness.fitness import Fitness
@@ -29,14 +30,19 @@ class SimpleExpectMinMaxAi(AiAbc):
             return max_alpha
         else:
             mean_alpha = 0.
-            zeros = np.argwhere(board.grid == 0)
-            if len(zeros) > 4:
-                zeros = zeros[np.random.randint(zeros.shape[0], size=4), :]
-            for zero in zeros:
-                grid_two = copy.deepcopy(board.grid)
-                grid_two[zero[0]][zero[1]] = 2
+            num_of_zeros = 0
+            grid = board.grid
+            rows, cols = list(range(len(grid))), list(range(len(grid[0])))
+            random.shuffle(rows)
+            random.shuffle(cols)
 
-                mean_alpha += SimpleExpectMinMaxAi.__expect_min_max__(Board(grid_two, board.score), depth - 1, True)
+            for i, j in itertools.product(rows, cols):
+                if num_of_zeros < 4 and grid[i][j] == 0:
+                    grid_two = copy.deepcopy(grid)
+                    grid_two[i][j] = 2
+                    num_of_zeros += 1
 
-            mean_alpha = mean_alpha / zeros.shape[0]
+                    mean_alpha += SimpleExpectMinMaxAi.__expect_min_max__(Board(grid_two, board.score), depth - 1, True)
+
+            mean_alpha = mean_alpha / num_of_zeros
             return mean_alpha

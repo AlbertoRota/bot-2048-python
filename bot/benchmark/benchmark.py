@@ -2,7 +2,6 @@ import time
 import multiprocessing as mp
 from collections import Counter
 
-import numpy as np
 from bot.ai.ai_abc import AiAbc
 from bot.game.board import Board
 
@@ -62,11 +61,11 @@ class Benchmark(object):
 
     @staticmethod
     def __run_game__(ai: AiAbc) -> (Board, int, float):
-        board = Board(np.array([
+        board = Board([
             [0, 0, 0, 0],
             [0, 0, 0, 0],
             [0, 0, 0, 0],
-            [0, 0, 0, 0]]),
+            [0, 0, 0, 0]],
             initialize=True
         )
 

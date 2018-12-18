@@ -1,6 +1,7 @@
 from __future__ import annotations
 import random
-import numpy as np
+import copy
+import itertools
 
 
 class Board(object):
@@ -8,9 +9,9 @@ class Board(object):
     all_moves = ["LEFT", "UP", "DOWN", "RIGHT"]
 
     # A relation between swipe direction and number of rotations needed, used in "swipe_grid"
-    __direction_to_rotation__ = {"LEFT": 0, "UP": 1, "DOWN": 3, "RIGHT": 2}
+    __direction_to_rotation__ = {"LEFT": 0, "UP": 3, "DOWN": 1, "RIGHT": 2}
 
-    def __init__(self, grid: np.ndarray = np.zeros((4, 4)), score: int = 0, initialize: bool = False):
+    def __init__(self, grid: [[int]], score: int = 0, initialize: bool = False):
         # Initialize current grid
         self.grid = grid
         if initialize:
@@ -67,40 +68,44 @@ class Board(object):
         return new_row, score_inc
 
     @staticmethod
-    def __rotate_grid__(grid, times):
-        new_grid = np.copy(grid)
+    def __rotate_grid__(grid: [[int]], times: int):
+        new_grid = copy.deepcopy(grid)
         if times == 0 or times == 4:
             new_grid = new_grid
         elif times == 1:
-            new_grid = new_grid.T[::-1]
+            new_grid = list(map(list, zip(*new_grid[::-1])))
         elif times == 2:
-            new_grid = new_grid[::-1, ::-1]
+            new_grid = list(map(list, zip(*new_grid[::-1])))
+            new_grid = list(map(list, zip(*new_grid[::-1])))
         elif times == 3:
-            new_grid = new_grid.T[:, ::-1]
+            new_grid = list(map(list, zip(*new_grid[::-1])))
+            new_grid = list(map(list, zip(*new_grid[::-1])))
+            new_grid = list(map(list, zip(*new_grid[::-1])))
         else:
             raise NotImplementedError("Only values between 0 and 4 are supported.")
         return new_grid
 
     @staticmethod
-    def __is_valid_move__(grid: np.ndarray, direction: str):
+    def __is_valid_move__(grid: [[int]], direction: str):
         for row in Board.__rotate_grid__(grid, Board.__direction_to_rotation__[direction]):
-            # for i in range(len(row) - 1):
-            #     first_tile, second_tile = row[i], row[i + 1]
-            #     if second_tile != 0 and (first_tile == second_tile or first_tile == 0):
-            #         return True
-
-            for x, y in zip(row[:-1], row[1:]):
-                if y != 0 and (x == y or x == 0):
+            for i in range(len(row) - 1):
+                first_tile, second_tile = row[i], row[i + 1]
+                if second_tile != 0 and (first_tile == second_tile or first_tile == 0):
                     return True
         return False
 
     @staticmethod
-    def __spawn_tile__(grid: np.ndarray) -> np.ndarray:
-        new_grid = np.copy(grid)
-        tile_to_spawn = random.sample([2] * 9 + [4], 1)[0]
+    def __spawn_tile__(grid: [[int]]) -> [[int]]:
+        new_grid = copy.deepcopy(grid)
+        tile_to_spawn = random.choice([2] * 9 + [4])
 
-        zero_index = np.argwhere(new_grid == 0)
-        np.random.shuffle(zero_index)
+        rows, cols = list(range(len(grid))), list(range(len(grid[0])))
+        random.shuffle(rows)
+        random.shuffle(cols)
 
-        new_grid[zero_index[0][0], zero_index[0][1]] = tile_to_spawn
+        for i, j in itertools.product(rows, cols):
+            if new_grid[i][j] == 0:
+                new_grid[i][j] = tile_to_spawn
+                return new_grid
+
         return new_grid
