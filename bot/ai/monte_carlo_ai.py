@@ -1,5 +1,5 @@
 import random
-import numpy as np
+import math
 from bot.ai.ai_abc import AiAbc
 from bot.game.board import Board
 
@@ -19,8 +19,8 @@ class MonteCarloAi(AiAbc):
         return best_move
 
     @staticmethod
-    def run_random_games(board: Board, runs: int) -> int:
-        return np.mean([MonteCarloAi.run_random_game(board) for _ in range(runs)])
+    def run_random_games(board: Board, runs: int) -> float:
+        return math.fsum([MonteCarloAi.run_random_game(board) for _ in range(runs)])/runs
 
     @staticmethod
     def run_random_game(board: Board) -> int:

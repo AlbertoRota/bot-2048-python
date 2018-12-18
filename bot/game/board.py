@@ -1,6 +1,7 @@
 from __future__ import annotations
 import random
-import numpy as np
+import copy
+import itertools
 
 
 class Board(object):
@@ -8,9 +9,9 @@ class Board(object):
     all_moves = ["LEFT", "UP", "DOWN", "RIGHT"]
 
     # A relation between swipe direction and number of rotations needed, used in "swipe_grid"
-    __direction_to_rotation__ = {"LEFT": 0, "UP": 1, "DOWN": 3, "RIGHT": 2}
+    __direction_to_rotation__ = {"LEFT": 0, "UP": 3, "DOWN": 1, "RIGHT": 2}
 
-    def __init__(self, grid: np.ndarray = np.zeros((4, 4)), score: int = 0, initialize: bool = False):
+    def __init__(self, grid: [[int]], score: int = 0, initialize: bool = False):
         # Initialize current grid
         self.grid = grid
         if initialize:
@@ -18,10 +19,7 @@ class Board(object):
             self.grid = Board.__spawn_tile__(self.grid)
 
         # Pre-calculate valid moves
-        self.valid_moves = []
-        for move in self.all_moves:
-            if Board.__is_valid_move__(self.grid, move):
-                self.valid_moves.append(move)
+        self.valid_moves = Board.__get_valid_moves__(self.grid)
 
         # Check if the game over, in our case, when we have no further valid moves
         self.is_game_over = not bool(self.valid_moves)
@@ -67,40 +65,75 @@ class Board(object):
         return new_row, score_inc
 
     @staticmethod
-    def __rotate_grid__(grid, times):
-        new_grid = np.copy(grid)
+    def __rotate_grid__(grid: [[int]], times: int) -> [[int]]:
         if times == 0 or times == 4:
-            new_grid = new_grid
+            new_grid = grid.copy()
         elif times == 1:
-            new_grid = new_grid.T[::-1]
+            new_grid = list(map(list, zip(*grid[::-1])))
         elif times == 2:
-            new_grid = new_grid[::-1, ::-1]
+            new_grid = list(map(list, zip(*grid[::-1])))
+            new_grid = list(map(list, zip(*new_grid[::-1])))
         elif times == 3:
-            new_grid = new_grid.T[:, ::-1]
+            new_grid = list(map(list, zip(*grid[::-1])))
+            new_grid = list(map(list, zip(*new_grid[::-1])))
+            new_grid = list(map(list, zip(*new_grid[::-1])))
         else:
             raise NotImplementedError("Only values between 0 and 4 are supported.")
         return new_grid
 
     @staticmethod
-    def __is_valid_move__(grid: np.ndarray, direction: str):
-        for row in Board.__rotate_grid__(grid, Board.__direction_to_rotation__[direction]):
-            # for i in range(len(row) - 1):
-            #     first_tile, second_tile = row[i], row[i + 1]
-            #     if second_tile != 0 and (first_tile == second_tile or first_tile == 0):
-            #         return True
+    def __get_valid_moves__(grid: [[int]]) -> [str]:
+        valid_moves = {}
+        for row in grid:
+            for i in range(len(row) - 1):
+                first_tile, second_tile = row[i], row[i + 1]
+                if first_tile != 0:
+                    if first_tile == second_tile:
+                        valid_moves["LEFT"] = True
+                        valid_moves["RIGHT"] = True
+                        break
 
-            for x, y in zip(row[:-1], row[1:]):
-                if y != 0 and (x == y or x == 0):
-                    return True
-        return False
+                if first_tile != 0 and second_tile == 0:
+                    valid_moves["RIGHT"] = True
+
+                if second_tile != 0 and first_tile == 0:
+                    valid_moves["LEFT"] = True
+
+            if "LEFT" in valid_moves and "RIGHT" in valid_moves:
+                break
+
+        for row in Board.__rotate_grid__(grid, 1):
+            for i in range(len(row) - 1):
+                first_tile, second_tile = row[i], row[i + 1]
+                if first_tile != 0:
+                    if first_tile == second_tile:
+                        valid_moves["UP"] = True
+                        valid_moves["DOWN"] = True
+                        break
+
+                if first_tile != 0 and second_tile == 0:
+                    valid_moves["UP"] = True
+
+                if second_tile != 0 and first_tile == 0:
+                    valid_moves["DOWN"] = True
+
+            if "UP" in valid_moves and "DOWN" in valid_moves:
+                break
+
+        return list(valid_moves.keys())
 
     @staticmethod
-    def __spawn_tile__(grid: np.ndarray) -> np.ndarray:
-        new_grid = np.copy(grid)
-        tile_to_spawn = random.sample([2] * 9 + [4], 1)[0]
+    def __spawn_tile__(grid: [[int]]) -> [[int]]:
+        new_grid = grid.copy()
+        tile_to_spawn = random.choice([2] * 9 + [4])
 
-        zero_index = np.argwhere(new_grid == 0)
-        np.random.shuffle(zero_index)
+        zero_list = list()
+        for i in range(len(new_grid)):
+            for j in range(len(new_grid[0])):
+                if new_grid[i][j] == 0:
+                    zero_list.append((i, j))
 
-        new_grid[zero_index[0][0], zero_index[0][1]] = tile_to_spawn
+        chosen_zero = random.choice(zero_list)
+        new_grid[chosen_zero[0]][chosen_zero[1]] = tile_to_spawn
+
         return new_grid

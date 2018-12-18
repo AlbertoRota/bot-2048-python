@@ -1,5 +1,4 @@
-import copy
-import numpy as np
+import itertools
 from bot.ai.ai_abc import AiAbc
 from bot.game.board import Board
 from bot.fitness.fitness import Fitness
@@ -29,16 +28,21 @@ class ExpectMinMaxAi(AiAbc):
             return max_alpha
         else:
             mean_alpha = 0.
-            zeros = np.argwhere(board.grid == 0)
-            for zero in zeros:
-                grid_two = copy.deepcopy(board.grid)
-                grid_two[zero[0]][zero[1]] = 2
+            num_of_zeros = 0
+            grid = board.grid
+            rows, cols = list(range(len(grid))), list(range(len(grid[0])))
+            for i, j in itertools.product(rows, cols):
+                if grid[i][j] == 0:
+                    grid_two = grid.copy()
+                    grid_two[i][j] = 2
 
-                grid_four = copy.deepcopy(board.grid)
-                grid_four[zero[0]][zero[1]] = 4
+                    grid_four = grid.copy()
+                    grid_four[i][j] = 4
 
-                mean_alpha += .9 * ExpectMinMaxAi.__expect_min_max__(Board(grid_two, board.score), depth - 1, True)
-                mean_alpha += .1 * ExpectMinMaxAi.__expect_min_max__(Board(grid_four, board.score), depth - 1, True)
+                    mean_alpha += .9 * ExpectMinMaxAi.__expect_min_max__(Board(grid_two, board.score), depth - 1, True)
+                    mean_alpha += .1 * ExpectMinMaxAi.__expect_min_max__(Board(grid_four, board.score), depth - 1, True)
 
-            mean_alpha = mean_alpha / zeros.shape[0]
+                    num_of_zeros += 1
+
+            mean_alpha = mean_alpha / num_of_zeros
             return mean_alpha
