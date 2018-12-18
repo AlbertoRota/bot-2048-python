@@ -1,3 +1,6 @@
+test:
+    python -m pytest
+
 profile-snakeviz:
     python -m cProfile -o output.pstats bot/main.py
     snakeviz output.pstats
