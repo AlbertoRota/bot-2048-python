@@ -84,6 +84,11 @@ class Board(object):
     @staticmethod
     def __is_valid_move__(grid: np.ndarray, direction: str):
         for row in Board.__rotate_grid__(grid, Board.__direction_to_rotation__[direction]):
+            # for i in range(len(row) - 1):
+            #     first_tile, second_tile = row[i], row[i + 1]
+            #     if second_tile != 0 and (first_tile == second_tile or first_tile == 0):
+            #         return True
+
             for x, y in zip(row[:-1], row[1:]):
                 if y != 0 and (x == y or x == 0):
                     return True

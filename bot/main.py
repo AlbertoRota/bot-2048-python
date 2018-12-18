@@ -5,6 +5,7 @@ from bot.ai.random_ai import RandomAi
 from bot.ai.ordered_ai import OrderedAi
 from bot.ai.expect_min_max_ai import ExpectMinMaxAi
 from bot.ai.simple_expect_min_max_ai import SimpleExpectMinMaxAi
+from bot.ai.monte_carlo_ai import MonteCarloAi
 
 
 def main():
@@ -21,9 +22,13 @@ def main():
     # print("ExpectMinMax AI:")
     # Benchmark.run(ExpectMinMaxAi, max_secs=240)
     # print()
+    #
+    # print("SimpleExpectMinMax AI:")
+    # Benchmark.run(SimpleExpectMinMaxAi, max_secs=60, parallel=False)
+    # print()
 
-    print("SimpleExpectMinMax AI:")
-    Benchmark.run(SimpleExpectMinMaxAi, max_secs=60, parallel=False)
+    print("MonteCarlo AI:")
+    Benchmark.run(MonteCarloAi, max_secs=60, parallel=False)
     print()
 
 
