@@ -95,7 +95,7 @@ class Board(object):
 
     @staticmethod
     def __spawn_tile__(grid: [[int]]) -> [[int]]:
-        new_grid = copy.deepcopy(grid)
+        new_grid = grid.copy()
         tile_to_spawn = random.choice([2] * 9 + [4])
 
         rows, cols = list(range(len(grid))), list(range(len(grid[0])))
