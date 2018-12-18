@@ -42,19 +42,19 @@ class Benchmark(object):
                 max_tiles[max(map(max, board.grid))] += 1
 
             print("\r", end="", flush=True)
-            print("Played {} games, {:4.2f}%, ETA: {} seconds)".format(
+            print("Played {} games, {:.2f}%, ETA: {:.2f} seconds)".format(
                 runs,
                 100 * runs / max_runs,
-                int(((game_secs / runs) * (max_runs - runs)) / mp.cpu_count())
+                ((game_secs / runs) * (max_runs - runs)) / mp.cpu_count()
             ), end="", flush=True)
 
         print("\r", end="", flush=True)
         print("Runs: " + str(runs))
-        print("Real secs: {0:.2f}".format(round(real_secs)))
-        print("Game secs: {0:.2f}".format(round(game_secs)))
-        print("Avg score: {0:.2f}".format(round(accumulated_score / runs)))
-        print("Avg moves: {0:.2f}".format(round(accumulated_moves / runs)))
-        print("Moves per sec: {0:.2f}".format(round(accumulated_moves / game_secs)))
+        print("Real secs: {0:.2f}".format(real_secs))
+        print("Game secs: {0:.2f}".format(game_secs))
+        print("Avg score: {0:.2f}".format(accumulated_score / runs))
+        print("Avg moves: {0:.2f}".format(accumulated_moves / runs))
+        print("Moves per sec: {0:.2f}".format(accumulated_moves / game_secs))
         print("Max tile distribution: ")
         for number, times in sorted(max_tiles.items()):
             print(str(number) + ": " + str(times) + " - ({0:.2f}%)".format((times/runs)*100))

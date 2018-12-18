@@ -29,7 +29,7 @@ def main():
     # print()
 
     print("SimpleExpectMinMax AI:")
-    Benchmark.run(SimpleExpectMinMaxAi, max_secs=60, parallel=False)
+    Benchmark.run(SimpleExpectMinMaxAi, max_runs=1, max_secs=60, parallel=False)
     print()
 
     # print("MonteCarlo AI:")
