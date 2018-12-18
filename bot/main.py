@@ -12,29 +12,29 @@ from bot.ai.monte_carlo_ai import MonteCarloAi
 def main():
     mp.freeze_support()
 
-    print("Random AI:")
-    Benchmark.run(RandomAi, max_secs=60)
+    # print("Random AI:")
+    # Benchmark.run(RandomAi, max_secs=60)
+    # print()
+    #
+    # print("Ordered AI:")
+    # Benchmark.run(OrderedAi, max_secs=60)
+    # print()
+
+    print("Greedy AI:")
+    Benchmark.run(GreedyAi, max_secs=60, parallel=False)
     print()
 
-    print("Ordered AI:")
-    Benchmark.run(OrderedAi, max_secs=60)
-    print()
-
-    print("Ordered AI:")
-    Benchmark.run(GreedyAi, max_secs=60)
-    print()
-
-    print("ExpectMinMax AI:")
-    Benchmark.run(ExpectMinMaxAi, max_secs=60)
-    print()
-
-    print("SimpleExpectMinMax AI:")
-    Benchmark.run(SimpleExpectMinMaxAi, max_secs=60)
-    print()
-
-    print("MonteCarlo AI:")
-    Benchmark.run(MonteCarloAi, max_secs=60)
-    print()
+    # print("ExpectMinMax AI:")
+    # Benchmark.run(ExpectMinMaxAi, max_secs=60)
+    # print()
+    #
+    # print("SimpleExpectMinMax AI:")
+    # Benchmark.run(SimpleExpectMinMaxAi, max_secs=60)
+    # print()
+    #
+    # print("MonteCarlo AI:")
+    # Benchmark.run(MonteCarloAi, max_secs=60)
+    # print()
 
 
 if __name__ == '__main__':

@@ -69,16 +69,15 @@ class Board(object):
 
     @staticmethod
     def __rotate_grid__(grid: [[int]], times: int):
-        new_grid = copy.deepcopy(grid)
         if times == 0 or times == 4:
-            new_grid = new_grid
+            new_grid = grid.copy()
         elif times == 1:
-            new_grid = list(map(list, zip(*new_grid[::-1])))
+            new_grid = list(map(list, zip(*grid[::-1])))
         elif times == 2:
-            new_grid = list(map(list, zip(*new_grid[::-1])))
+            new_grid = list(map(list, zip(*grid[::-1])))
             new_grid = list(map(list, zip(*new_grid[::-1])))
         elif times == 3:
-            new_grid = list(map(list, zip(*new_grid[::-1])))
+            new_grid = list(map(list, zip(*grid[::-1])))
             new_grid = list(map(list, zip(*new_grid[::-1])))
             new_grid = list(map(list, zip(*new_grid[::-1])))
         else:
