@@ -127,13 +127,13 @@ class Board(object):
         new_grid = grid.copy()
         tile_to_spawn = random.choice([2] * 9 + [4])
 
-        rows, cols = list(range(len(grid))), list(range(len(grid[0])))
-        random.shuffle(rows)
-        random.shuffle(cols)
+        zero_list = list()
+        for i in range(len(new_grid)):
+            for j in range(len(new_grid[0])):
+                if new_grid[i][j] == 0:
+                    zero_list.append((i, j))
 
-        for i, j in itertools.product(rows, cols):
-            if new_grid[i][j] == 0:
-                new_grid[i][j] = tile_to_spawn
-                return new_grid
+        chosen_zero = random.choice(zero_list)
+        new_grid[chosen_zero[0]][chosen_zero[1]] = tile_to_spawn
 
         return new_grid
