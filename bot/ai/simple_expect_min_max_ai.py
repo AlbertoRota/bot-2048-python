@@ -11,7 +11,7 @@ class SimpleExpectMinMaxAi(AiAbc):
         best_movement = board.valid_moves[0]
         best_movement_score = -float("inf")
         for move in board.valid_moves:
-            movement_score = SimpleExpectMinMaxAi.__expect_min_max__(board.swipe_grid(move), 3, False)
+            movement_score = SimpleExpectMinMaxAi.__simple_expect_min_max__(board.swipe_grid(move), 5, False)
             if movement_score > best_movement_score:
                 best_movement_score = movement_score
                 best_movement = move
@@ -19,13 +19,13 @@ class SimpleExpectMinMaxAi(AiAbc):
         return best_movement
 
     @staticmethod
-    def __expect_min_max__(board: Board, depth: int, is_move: bool) -> float:
+    def __simple_expect_min_max__(board: Board, depth: int, is_move: bool) -> float:
         if board.is_game_over or depth == 0:
             return Fitness.get_fitness(board)
         elif is_move:
             max_alpha = -float("inf")
             for move in board.valid_moves:
-                max_alpha = max(max_alpha, SimpleExpectMinMaxAi.__expect_min_max__(board.swipe_grid(move), depth - 1, False))
+                max_alpha = max(max_alpha, SimpleExpectMinMaxAi.__simple_expect_min_max__(board.swipe_grid(move), depth - 1, False))
             return max_alpha
         else:
             mean_alpha = 0.
@@ -41,7 +41,7 @@ class SimpleExpectMinMaxAi(AiAbc):
                     grid_two[i][j] = 2
                     num_of_zeros += 1
 
-                    mean_alpha += SimpleExpectMinMaxAi.__expect_min_max__(Board(grid_two, board.score), depth - 1, True)
+                    mean_alpha += SimpleExpectMinMaxAi.__simple_expect_min_max__(Board(grid_two, board.score), depth - 1, True)
 
             mean_alpha = mean_alpha / num_of_zeros
             return mean_alpha
