@@ -11,7 +11,7 @@ class MonteCarloAi(AiAbc):
         best_move = None
 
         for move in board.valid_moves:
-            move_score = MonteCarloAi.run_random_games(board, 5)
+            move_score = MonteCarloAi.run_random_games(board, move, 50)
             if move_score > best_score:
                 best_score = move_score
                 best_move = move
@@ -19,11 +19,13 @@ class MonteCarloAi(AiAbc):
         return best_move
 
     @staticmethod
-    def run_random_games(board: Board, runs: int) -> float:
-        return math.fsum([MonteCarloAi.run_random_game(board) for _ in range(runs)])/runs
+    def run_random_games(board: Board, initial_move: str, runs: int) -> float:
+        scores = [MonteCarloAi.run_random_game(board, initial_move) for _ in range(runs)]
+        return math.fsum(scores)
 
     @staticmethod
-    def run_random_game(board: Board) -> int:
+    def run_random_game(board: Board, initial_move: str) -> int:
+        board = board.swipe_grid(initial_move, spawn_tile=True)
         while not board.is_game_over:
-            board = board.swipe_grid(random.sample(board.valid_moves, 1)[0], spawn_tile=True)
+            board = board.swipe_grid(random.choice(board.valid_moves), spawn_tile=True)
         return board.score

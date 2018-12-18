@@ -6,4 +6,4 @@ from bot.game.board import Board
 class RandomAi(AiAbc):
     @staticmethod
     def get_next_move(board: Board):
-        return random.sample(board.valid_moves, 1)[0]
+        return random.choice(board.valid_moves)
