@@ -1,4 +1,5 @@
 import time
+import platform
 import multiprocessing as mp
 from collections import Counter
 
@@ -10,6 +11,14 @@ class Benchmark(object):
 
     @staticmethod
     def run(ai: AiAbc, max_runs: int = 100, max_secs: int = 300, parallel: bool = True):
+
+        # TODO: PyPy in Windows raises exception using the "multiprocessing" module
+        # See: https://bitbucket.org/pypy/pypy/issues/2850/error-when-creating-a-pool-python
+        python_impl = platform.python_implementation()
+        system = platform.system()
+        if system == "Windows" and python_impl == "PyPy":
+            parallel = False
+
         accumulated_score = 0
         accumulated_moves = 0
         max_tiles = Counter()

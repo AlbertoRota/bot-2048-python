@@ -1,7 +1,4 @@
-from __future__ import annotations
 import random
-import copy
-import itertools
 
 
 class Board(object):
@@ -27,7 +24,9 @@ class Board(object):
         # Set the current score
         self.score = score
 
-    def swipe_grid(self, direction: str, spawn_tile: bool = False) -> Board:
+    # TODO: PyPy can't resolve "from __future__ import annotations" and Python can't resolve "-> Board"
+    # See: https://stackoverflow.com/a/33533514
+    def swipe_grid(self, direction: str, spawn_tile: bool = False) -> "Board":
         """
         Swipes the grid in the specified direction.
         Once done, return
@@ -102,9 +101,9 @@ class Board(object):
             if "LEFT" in valid_moves and "RIGHT" in valid_moves:
                 break
 
-        for row in Board.__rotate_grid__(grid, 1):
-            for i in range(len(row) - 1):
-                first_tile, second_tile = row[i], row[i + 1]
+        for col in Board.__rotate_grid__(grid, 1):
+            for i in range(len(col) - 1):
+                first_tile, second_tile = col[i], col[i + 1]
                 if first_tile != 0:
                     if first_tile == second_tile:
                         valid_moves["UP"] = True
