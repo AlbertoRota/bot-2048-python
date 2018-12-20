@@ -36,8 +36,9 @@ class TimedMonteCarloAi(AiAbc):
         best_score, best_move = 0, None
 
         for move, score in results.items():
-            avg_move_score = score[0]/score[1]
-            if avg_move_score > best_score:
-                best_score, best_move = avg_move_score, move
+            if score[1] != 0:
+                avg_move_score = score[0]/score[1]
+                if avg_move_score > best_score:
+                    best_score, best_move = avg_move_score, move
 
         return best_move
