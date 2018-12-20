@@ -10,8 +10,9 @@ class MonteCarloAi(AiAbc):
         best_score = 0
         best_move = None
 
+        runs = 200 // len(board.valid_moves)
         for move in board.valid_moves:
-            move_score = MonteCarloAi.run_random_games(board, move, 50)
+            move_score = MonteCarloAi.run_random_games(board, move, runs)
             if move_score > best_score:
                 best_score = move_score
                 best_move = move
