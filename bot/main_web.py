@@ -7,22 +7,10 @@ from bot.game.board import Board
 
 
 class Cords:
-    cord11 = (240, 350)
-    cord12 = (355, 350)
-    cord13 = (480, 350)
-    cord14 = (615, 350)
-    cord21 = (240, 475)
-    cord22 = (355, 475)
-    cord23 = (480, 475)
-    cord24 = (615, 475)
-    cord31 = (240, 595)
-    cord32 = (355, 595)
-    cord33 = (480, 595)
-    cord34 = (615, 595)
-    cord41 = (240, 736)
-    cord42 = (355, 736)
-    cord43 = (480, 736)
-    cord44 = (615, 736)
+    cord11, cord12, cord13, cord14 = (170, 350), (280, 350), (280, 350), (500, 350)
+    cord21, cord22, cord23, cord24 = (170, 460), (280, 460), (280, 460), (500, 460)
+    cord31, cord32, cord33, cord34 = (170, 570), (280, 570), (280, 570), (500, 570)
+    cord41, cord42, cord43, cord44 = (170, 680), (280, 680), (280, 680), (500, 680)
 
     cordArray = [
         [cord11, cord12, cord13, cord14],
@@ -47,13 +35,19 @@ class Values:
     twoZeroFourEight = 189
     fourZeroNineSix = 57
 
-    valueArray = [empty, two, four, eight, sixteen, thirtyTwo, sixtyFour, oneTwentyEight, twoFiftySix, fiveOneTwo, oneZeroTwoFour, twoZeroFourEight, fourZeroNineSix]
+    valueArray = [
+        empty, two, four, eight,
+        sixteen, thirtyTwo, sixtyFour,
+        oneTwentyEight, twoFiftySix,
+        fiveOneTwo, oneZeroTwoFour,
+        twoZeroFourEight, fourZeroNineSix
+    ]
 
 
-def getGrid():
+def get_grid():
     image = ImageGrab.grab()
-    grayImage = ImageOps.grayscale(image)
-    currentGrid = [
+    gray_image = ImageOps.grayscale(image)
+    current_grid = [
         [0, 0, 0, 0],
         [0, 0, 0, 0],
         [0, 0, 0, 0],
@@ -62,18 +56,18 @@ def getGrid():
 
     for row_index, row in enumerate(Cords.cordArray):
         for cell_index, cell in enumerate(row):
-            pixel = grayImage.getpixel(cell)
+            pixel = gray_image.getpixel(cell)
             pos = Values.valueArray.index(pixel)
             if pos == 0:
-                currentGrid[row_index][cell_index] = 0
+                current_grid[row_index][cell_index] = 0
             else:
-                currentGrid[row_index][cell_index] = pow(2, pos)
+                current_grid[row_index][cell_index] = pow(2, pos)
 
-    return Board(currentGrid)
+    return Board(current_grid)
 
 
 def main():
-    board = getGrid()
+    board = get_grid()
     while not board.is_game_over:
         direction = TimedMonteCarloAi.get_next_move(board)
         if direction == "UP":
@@ -89,8 +83,8 @@ def main():
             pyautogui.keyDown("down")
             pyautogui.keyUp("down")
 
-        time.sleep(0.3)
-        board = getGrid()
+        time.sleep(0.2)
+        board = get_grid()
 
 
 if __name__ == '__main__':

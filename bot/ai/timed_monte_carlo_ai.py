@@ -7,7 +7,7 @@ from bot.game.board import Board
 
 class TimedMonteCarloAi(AiAbc):
     @staticmethod
-    def get_next_move(board: Board, max_iter: int = 99999999, max_sec: float = 0.2):
+    def get_next_move(board: Board, max_iter: int = 99999999, max_sec: float = 0.5):
         results = TimedMonteCarloAi.run_random_games(board, max_iter, max_sec)
         best_move = TimedMonteCarloAi.analyze_games(results)
         return best_move
