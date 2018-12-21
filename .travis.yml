@@ -3,4 +3,4 @@ python:
   - "3.6"
   - "pypy3.5"
 script:
-  - python -m pytest --ignore=bot/main_test.py --ignore=bot/main_web.py
+  - pytest

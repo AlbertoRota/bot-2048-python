@@ -1,4 +1,4 @@
-import pyautogui
-
 # Breaks CI pipeline if not commented
-pyautogui.displayMousePosition()
+# import pyautogui
+
+# pyautogui.displayMousePosition()
