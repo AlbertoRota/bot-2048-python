@@ -22,7 +22,7 @@ def main():
     # print()
 
     # print("Greedy AI:")
-    # Benchmark.run(GreedyAi, max_secs=10, parallel=True)
+    # Benchmark.run(GreedyAi, max_secs=300, parallel=False)
     # print()
 
     # print("ExpectMinMax AI:")
@@ -33,12 +33,12 @@ def main():
     # Benchmark.run(SimpleExpectMinMaxAi, max_runs=10, max_secs=99999, parallel=True)
     # print()
 
-    print("MonteCarlo AI:")
-    Benchmark.run(MonteCarloAi, max_runs=2, max_secs=999999999, parallel=True)
-    print()
+    # print("MonteCarlo AI:")
+    # Benchmark.run(MonteCarloAi, max_runs=2, max_secs=999999999, parallel=True)
+    # print()
 
     print("TimedMonteCarlo AI:")
-    Benchmark.run(TimedMonteCarloAi, max_runs=2, max_secs=999999999, parallel=True)
+    Benchmark.run(TimedMonteCarloAi, max_runs=2, max_secs=999999999, parallel=False)
     print()
 
 
