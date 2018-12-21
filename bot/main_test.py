@@ -1,3 +1,4 @@
 import pyautogui
 
-pyautogui.displayMousePosition()
+# Breaks CI pipeline if not commented
+# pyautogui.displayMousePosition()
