@@ -1,4 +1,5 @@
 snakeviz
 pytest
 PyAutoGUI
+python3-xlib
 Pillow
