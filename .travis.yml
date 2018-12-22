@@ -3,4 +3,4 @@ python:
   - "3.6"
   - "pypy3.5"
 script:
-  - pytest
+  - pytest --ignore=bot/main_web.py --doctest-modules

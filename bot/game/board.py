@@ -28,8 +28,16 @@ class Board(object):
     # See: https://stackoverflow.com/a/33533514
     def swipe_grid(self, direction: str, spawn_tile: bool = False) -> "Board":
         """
-        Swipes the grid in the specified direction.
-        Once done, return
+        Swipes the grid in the specified direction.\n
+        Once done, returns a new "Board" object with the new grid.\n
+        >>> initial_board = Board([[2, 0], [4, 4]])
+        >>> final_board = initial_board.swipe_grid("RIGHT")
+        >>> final_board.grid
+        [[0, 2], [0, 8]]
+
+        The new board also has the score propely updated:
+        >>> final_board.score
+        8
         """
         new_grid = Board.__rotate_grid__(self.grid, Board.__direction_to_rotation__[direction])
         new_score = self.score
@@ -44,7 +52,7 @@ class Board(object):
         return Board(new_grid, new_score)
 
     @staticmethod
-    def __swipe_row_left___(row: list):
+    def __swipe_row_left___(row: [int]) -> ([int], int):
         last_non_zero = -1
         first_free_cell = 0
         new_row = [0] * len(row)
@@ -65,6 +73,27 @@ class Board(object):
 
     @staticmethod
     def __rotate_grid__(grid: [[int]], times: int) -> [[int]]:
+        """Rotates the given grid the specified amount of times.
+
+        >>> grid = [[1, 2], [4, 3]]
+        >>> Board.__rotate_grid__(grid, 1)
+        [[4, 1], [3, 2]]
+        >>> Board.__rotate_grid__(grid, 2)
+        [[3, 4], [2, 1]]
+        >>> Board.__rotate_grid__(grid, 3)
+        [[2, 3], [1, 4]]
+
+        Note that rotating 0 or 4 times will return an identical grid.
+
+        >>> grid == Board.__rotate_grid__(grid, 0)
+        True
+        >>> grid == Board.__rotate_grid__(grid, 4)
+        True
+
+        :param grid: The grid to rotate
+        :param times: The number of times the grid should be rotated
+        :return: The rotated grid
+        """
         if times == 0 or times == 4:
             new_grid = grid.copy()
         elif times == 1:
