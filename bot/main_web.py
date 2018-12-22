@@ -1,5 +1,4 @@
-from PIL import ImageOps
-import pyscreenshot as ImageGrab
+from PIL import ImageGrab, ImageOps
 import pyautogui
 import time
 
