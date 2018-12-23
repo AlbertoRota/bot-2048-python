@@ -4,7 +4,8 @@ import multiprocessing as mp
 from collections import Counter
 
 from bot.ai.ai_abc import AiAbc
-from bot.game.board import Board
+from bot.game.board_abc import BoardABC
+from bot.game.board_2048 import Board2048
 
 
 class Benchmark(object):
@@ -69,21 +70,14 @@ class Benchmark(object):
             print(str(number) + ": " + str(times) + " - ({0:.2f}%)".format((times/runs)*100))
 
     @staticmethod
-    def __run_game__(ai: AiAbc) -> (Board, int, float):
-        board = Board([
-            [0, 0, 0, 0],
-            [0, 0, 0, 0],
-            [0, 0, 0, 0],
-            [0, 0, 0, 0]],
-            initialize=True
-        )
+    def __run_game__(ai: AiAbc) -> (BoardABC, int, float):
+        board = Board2048(initialize_grid=True)
 
         start_time = time.time()
         num_of_movements = 0
 
-        while not board.is_game_over:
-            direction = ai.get_next_move(board)
-            board = board.swipe_grid(direction, spawn_tile=True)
+        while board.get_moves():
+            board.do_move(ai.get_next_move(board), spawn_tile=True)
             num_of_movements += 1
 
         return board, num_of_movements, time.time() - start_time

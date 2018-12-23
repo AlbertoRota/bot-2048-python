@@ -13,9 +13,9 @@ from bot.ai.timed_monte_carlo_ai import TimedMonteCarloAi
 def main():
     mp.freeze_support()
 
-    # print("Random AI:")
-    # Benchmark.run(RandomAi, max_secs=10, parallel=True)
-    # print()
+    print("Random AI:")
+    Benchmark.run(RandomAi, max_secs=10, parallel=False)
+    print()
 
     # print("Ordered AI:")
     # Benchmark.run(OrderedAi, max_secs=60)
@@ -37,9 +37,9 @@ def main():
     # Benchmark.run(MonteCarloAi, max_runs=2, max_secs=999999999, parallel=True)
     # print()
 
-    print("TimedMonteCarlo AI:")
-    Benchmark.run(TimedMonteCarloAi, max_runs=2, max_secs=999999999, parallel=False)
-    print()
+    # print("TimedMonteCarlo AI:")
+    # Benchmark.run(TimedMonteCarloAi, max_runs=2, max_secs=999999999, parallel=False)
+    # print()
 
 
 if __name__ == '__main__':
