@@ -6,4 +6,5 @@ from bot.game.board_abc import BoardABC
 class RandomAi(AiAbc):
     @staticmethod
     def get_next_move(board: BoardABC):
-        return random.choice(board.get_moves())
+        moves = board.get_moves()
+        return moves[int(len(moves) * random.random())]

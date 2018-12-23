@@ -17,9 +17,9 @@ def main():
     Benchmark.run(RandomAi, max_secs=10, parallel=False)
     print()
 
-    # print("Ordered AI:")
-    # Benchmark.run(OrderedAi, max_secs=60)
-    # print()
+    print("Ordered AI:")
+    Benchmark.run(OrderedAi, max_secs=10, parallel=False)
+    print()
 
     # print("Greedy AI:")
     # Benchmark.run(GreedyAi, max_secs=300, parallel=False)

@@ -97,7 +97,8 @@ class Board2048(BoardABC):
         )
 
     def spawn_tile(self):
-        tile_to_spawn = random.choice([2] * 9 + [4])
+        tile_distribution = [2] * 9 + [4]
+        tile_to_spawn = tile_distribution[int(len(tile_distribution) * random.random())]
 
         zero_list = list()
         grid = self.grid
@@ -106,7 +107,7 @@ class Board2048(BoardABC):
                 if grid[i][j] == 0:
                     zero_list.append((i, j))
 
-        chosen_zero = random.choice(zero_list)
+        chosen_zero = zero_list[int(len(zero_list) * random.random())]
         self.grid[chosen_zero[0]][chosen_zero[1]] = tile_to_spawn
 
     def rotate_grid(self, times: int) -> [[int]]:
