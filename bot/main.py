@@ -13,13 +13,13 @@ from bot.ai.timed_monte_carlo_ai import TimedMonteCarloAi
 def main():
     mp.freeze_support()
 
-    print("Random AI:")
-    Benchmark.run(RandomAi, max_secs=10, parallel=False)
-    print()
+    # print("Random AI:")
+    # Benchmark.run(RandomAi, max_secs=10, parallel=False)
+    # print()
 
-    print("Ordered AI:")
-    Benchmark.run(OrderedAi, max_secs=10, parallel=False)
-    print()
+    # print("Ordered AI:")
+    # Benchmark.run(OrderedAi, max_secs=10, parallel=False)
+    # print()
 
     print("Greedy AI:")
     Benchmark.run(GreedyAi, max_secs=10, parallel=False)

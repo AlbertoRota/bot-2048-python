@@ -17,5 +17,8 @@ class BoardABC(ABC):
     def get_result(self) -> float:
         raise NotImplementedError
 
+    def get_fitness(self) -> float:
+        raise NotImplementedError
+
     def __repr__(self) -> str:
         raise NotImplementedError

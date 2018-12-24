@@ -1,6 +1,7 @@
 import random
 
 from bot.game.board_abc import BoardABC
+from bot.fitness.fitness_2048 import Fitness2048
 
 
 class Board2048(BoardABC):
@@ -24,6 +25,7 @@ class Board2048(BoardABC):
         self.score = score
 
         self.cached_moves = None
+        self.cached_fitness = None
 
     def clone(self) -> "Board2048":
         return Board2048(grid=self.grid.copy(), score=self.score)
@@ -39,6 +41,7 @@ class Board2048(BoardABC):
             self.spawn_tile()
 
         self.cached_moves = None
+        self.cached_fitness = None
 
     def get_moves(self) -> [int]:
         if self.cached_moves is None:
@@ -88,6 +91,11 @@ class Board2048(BoardABC):
 
     def get_result(self) -> float:
         return self.score
+
+    def get_fitness(self) -> float:
+        if not self.cached_fitness:
+            self.cached_fitness = Fitness2048.calculate_fitness(self.grid, self.get_moves())
+        return self.cached_fitness
 
     def __repr__(self) -> str:
         return "Grid: {}\nValid moves: {}\nScore: {}".format(
