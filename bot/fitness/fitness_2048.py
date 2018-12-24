@@ -32,7 +32,5 @@ class Fitness2048:
             if tile > max_tile:
                 max_tile = tile
 
-
-        score2 = sum_score - math.pow((grid[3][0] != max_tile) * abs(grid[3][0] - max_tile), 2)
-
-        return score2
+        fitness = sum_score - math.pow((grid[3][0] != max_tile) * abs(grid[3][0] - max_tile), 2)
+        return fitness
