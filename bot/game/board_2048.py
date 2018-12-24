@@ -100,12 +100,8 @@ class Board2048(BoardABC):
         tile_distribution = [2] * 9 + [4]
         tile_to_spawn = tile_distribution[int(len(tile_distribution) * random.random())]
 
-        zero_list = list()
         grid = self.grid
-        for i in range(len(grid)):
-            for j in range(len(grid[0])):
-                if grid[i][j] == 0:
-                    zero_list.append((i, j))
+        zero_list = [(i, j) for i, row in enumerate(grid) for j, cell in enumerate(row) if cell == 0]
 
         chosen_zero = zero_list[int(len(zero_list) * random.random())]
         self.grid[chosen_zero[0]][chosen_zero[1]] = tile_to_spawn

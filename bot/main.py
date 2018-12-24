@@ -21,9 +21,9 @@ def main():
     Benchmark.run(OrderedAi, max_secs=10, parallel=False)
     print()
 
-    # print("Greedy AI:")
-    # Benchmark.run(GreedyAi, max_secs=300, parallel=False)
-    # print()
+    print("Greedy AI:")
+    Benchmark.run(GreedyAi, max_secs=10, parallel=False)
+    print()
 
     # print("ExpectMinMax AI:")
     # Benchmark.run(ExpectMinMaxAi, max_secs=60)
