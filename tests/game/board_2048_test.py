@@ -51,7 +51,7 @@ class TestGameMethods(unittest.TestCase):
     def __check_moves__(self, board_2048, expected):
         for move, expected_results in expected.items():
             board_to_move = board_2048.clone()
-            board_to_move.do_move(move)
+            board_to_move.do_move(move, False)
             self.assertEqual(board_to_move.grid, expected_results[0])
             self.assertEqual(board_to_move.score, expected_results[1])
             self.assertEqual(board_to_move.get_result(), expected_results[1])
