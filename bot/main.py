@@ -7,7 +7,6 @@ from bot.ai.greedy_ai import GreedyAi
 from bot.ai.expect_min_max_ai import ExpectMinMaxAi
 from bot.ai.simple_expect_min_max_ai import SimpleExpectMinMaxAi
 from bot.ai.monte_carlo_ai import MonteCarloAi
-from bot.ai.monte_carlo_ai import NewMonteCarloAi
 from bot.ai.timed_monte_carlo_ai import TimedMonteCarloAi
 
 
@@ -34,12 +33,8 @@ def main():
     # Benchmark.run(SimpleExpectMinMaxAi, max_runs=10, max_secs=99999, parallel=True)
     # print()
 
-    # print("MonteCarlo AI:")
-    # Benchmark.run(MonteCarloAi, max_runs=2, max_secs=999999999, parallel=True)
-    # print()
-
     print("NewMonteCarlo AI:")
-    Benchmark.run(NewMonteCarloAi, max_runs=2, max_secs=999999999, parallel=True)
+    Benchmark.run(MonteCarloAi, max_runs=2, max_secs=999999999, parallel=True)
     print()
 
     # print("TimedMonteCarlo AI:")
