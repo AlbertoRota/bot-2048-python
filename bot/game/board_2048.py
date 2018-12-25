@@ -10,7 +10,7 @@ class Board2048(BoardABC):
     MOVE_RIGHT  = 2
     MOVE_UP     = 3
 
-    def __init__(self, grid: [[int]] = None, initialize_grid: bool = False, score: int = 0):
+    def __init__(self, grid: [[int]] = None, initialize: bool = False, score: int = 0):
         super().__init__()
 
         if not grid:
@@ -18,7 +18,7 @@ class Board2048(BoardABC):
         else:
             self.grid = grid
 
-        if initialize_grid:
+        if initialize:
             self.spawn_tile()
             self.spawn_tile()
 
@@ -30,7 +30,7 @@ class Board2048(BoardABC):
     def clone(self) -> "Board2048":
         return Board2048(grid=self.grid.copy(), score=self.score)
 
-    def do_move(self, move, spawn_tile: bool = False):
+    def do_move(self, move: int, spawn_tile: bool):
         rotated_grid = self.rotate_grid(move)
         for i, row in enumerate(rotated_grid):
             self.grid[i], score_inc = Board2048.swipe_row_left(row)

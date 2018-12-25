@@ -2,16 +2,19 @@ from abc import ABC
 
 
 class BoardABC(ABC):
-    def __init__(self):
+    def __init__(self, initialize: bool = False):
         pass
 
     def clone(self) -> "BoardABC":
         pass
 
-    def do_move(self, move):
+    def do_move(self, move: int, spawn_tile: bool):
         raise NotImplementedError
 
     def get_moves(self) -> [int]:
+        raise NotImplementedError
+
+    def get_chance_moves(self) -> [(float, (int, int))]:
         raise NotImplementedError
 
     def get_result(self) -> float:
