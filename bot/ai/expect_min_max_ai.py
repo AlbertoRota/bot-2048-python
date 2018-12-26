@@ -37,6 +37,6 @@ class ExpectMinMaxAi(AiAbc):
             for chance_move in chance_moves:
                 chance_board = board.clone()
                 chance_board.do_chance_move(chance_move)
-                mean_alpha += chance_move[0] * ExpectMinMaxAi.__expect_min_max__(board, depth - 1, True)
+                mean_alpha += chance_move[0] * ExpectMinMaxAi.__expect_min_max__(chance_board, depth - 1, True)
 
             return mean_alpha

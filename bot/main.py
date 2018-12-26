@@ -13,25 +13,25 @@ from bot.ai.timed_monte_carlo_ai import TimedMonteCarloAi
 def main():
     mp.freeze_support()
 
-    print("Random AI:")
-    Benchmark.run(RandomAi, max_secs=10, parallel=False)
-    print()
-
-    print("Ordered AI:")
-    Benchmark.run(OrderedAi, max_secs=10, parallel=False)
-    print()
-
-    print("Greedy AI:")
-    Benchmark.run(GreedyAi, max_secs=10, parallel=False)
-    print()
-
+    # print("Random AI:")
+    # Benchmark.run(RandomAi, max_secs=10, parallel=False)
+    # print()
+    #
+    # print("Ordered AI:")
+    # Benchmark.run(OrderedAi, max_secs=10, parallel=False)
+    # print()
+    #
+    # print("Greedy AI:")
+    # Benchmark.run(GreedyAi, max_secs=10, parallel=False)
+    # print()
+    #
     print("ExpectMinMax AI:")
     Benchmark.run(ExpectMinMaxAi, max_secs=10, parallel=False)
     print()
 
-    # print("SimpleExpectMinMax AI:")
-    # Benchmark.run(SimpleExpectMinMaxAi, max_runs=10, max_secs=99999, parallel=True)
-    # print()
+    print("SimpleExpectMinMax AI:")
+    Benchmark.run(SimpleExpectMinMaxAi, max_secs=10, parallel=False)
+    print()
 
     print("NewMonteCarlo AI:")
     Benchmark.run(MonteCarloAi, max_secs=10, parallel=False)
