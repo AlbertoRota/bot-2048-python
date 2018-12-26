@@ -1,16 +1,18 @@
 import itertools
 from bot.ai.ai_abc import AiAbc
-from bot.game.board import Board
-from bot.fitness.fitness import Fitness
+from bot.game.board_abc import BoardABC
 
 
 class ExpectMinMaxAi(AiAbc):
     @staticmethod
-    def get_next_move(board: Board):
-        best_movement = board.valid_moves[0]
+    def get_next_move(board: BoardABC):
+        valid_moves = board.get_moves()
+        best_movement = valid_moves[0]
         best_movement_score = -float("inf")
-        for move in board.valid_moves:
-            movement_score = ExpectMinMaxAi.__expect_min_max__(board.swipe_grid(move), 3, False)
+        for move in valid_moves:
+            move_board = board.clone()
+            move_board.do_move(move, False)
+            movement_score = ExpectMinMaxAi.__expect_min_max__(move_board, 3, False)
             if movement_score > best_movement_score:
                 best_movement_score = movement_score
                 best_movement = move
@@ -18,31 +20,23 @@ class ExpectMinMaxAi(AiAbc):
         return best_movement
 
     @staticmethod
-    def __expect_min_max__(board: Board, depth: int, is_move: bool) -> float:
-        if board.is_game_over or depth == 0:
-            return Fitness.get_fitness(board)
+    def __expect_min_max__(board: BoardABC, depth: int, is_move: bool) -> float:
+        valid_moves = board.get_moves()
+        if not valid_moves or depth == 0:
+            return board.get_fitness()
         elif is_move:
             max_alpha = -float("inf")
-            for move in board.valid_moves:
-                max_alpha = max(max_alpha, ExpectMinMaxAi.__expect_min_max__(board.swipe_grid(move), depth - 1, False))
+            for move in valid_moves:
+                max_board = board.clone()
+                max_board.do_move(move, False)
+                max_alpha = max(max_alpha, ExpectMinMaxAi.__expect_min_max__(max_board, depth - 1, False))
             return max_alpha
         else:
             mean_alpha = 0.
-            num_of_zeros = 0
-            grid = board.grid
-            rows, cols = list(range(len(grid))), list(range(len(grid[0])))
-            for i, j in itertools.product(rows, cols):
-                if grid[i][j] == 0:
-                    grid_two = grid.copy()
-                    grid_two[i][j] = 2
+            chance_moves = board.get_chance_moves()
+            for chance_move in chance_moves:
+                chance_board = board.clone()
+                chance_board.do_chance_move(chance_move)
+                mean_alpha += chance_move[0] * ExpectMinMaxAi.__expect_min_max__(board, depth - 1, True)
 
-                    grid_four = grid.copy()
-                    grid_four[i][j] = 4
-
-                    mean_alpha += .9 * ExpectMinMaxAi.__expect_min_max__(Board(grid_two, board.score), depth - 1, True)
-                    mean_alpha += .1 * ExpectMinMaxAi.__expect_min_max__(Board(grid_four, board.score), depth - 1, True)
-
-                    num_of_zeros += 1
-
-            mean_alpha = mean_alpha / num_of_zeros
             return mean_alpha

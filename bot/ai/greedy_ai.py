@@ -10,7 +10,7 @@ class GreedyAi(AiAbc):
         best_movement_score = -float("inf")
         for move in valid_moves:
             moved_board = board.clone()
-            moved_board.do_move(move)
+            moved_board.do_move(move, False)
 
             move_fitness = board.get_fitness()
             if move_fitness > best_movement_score:

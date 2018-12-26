@@ -89,6 +89,20 @@ class Board2048(BoardABC):
 
         return self.cached_moves
 
+    def do_chance_move(self, chance_move: (float, (int, int), int)):
+        cell = chance_move[1]
+        value = chance_move[2]
+        self.grid[cell[0]][cell[1]] = value
+
+        self.cached_moves = None
+        self.cached_fitness = None
+
+    def get_chance_moves(self) -> [(float, (int, int), int)]:
+        grid = self.grid
+        zero_list = [(i, j) for i, row in enumerate(grid) for j, cell in enumerate(row) if cell == 0]
+        num_zeros = len(zero_list)
+        return [(chance / num_zeros, (i, j), val) for i, j in zero_list for chance, val in [(0.9, 2), (0.1, 4)]]
+
     def get_result(self) -> float:
         return self.score
 

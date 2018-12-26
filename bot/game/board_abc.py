@@ -14,7 +14,10 @@ class BoardABC(ABC):
     def get_moves(self) -> [int]:
         raise NotImplementedError
 
-    def get_chance_moves(self) -> [(float, (int, int))]:
+    def do_chance_move(self, chance_move: (float, (int, int), int)):
+        raise NotImplementedError
+
+    def get_chance_moves(self) -> [(float, (int, int), int)]:
         raise NotImplementedError
 
     def get_result(self) -> float:
