@@ -71,7 +71,7 @@ class Benchmark(object):
 
     @staticmethod
     def __run_game__(ai: AiAbc) -> (BoardABC, int, float):
-        board = Board2048(initialize_grid=True)
+        board = Board2048(initialize=True)
 
         start_time = time.time()
         num_of_movements = 0

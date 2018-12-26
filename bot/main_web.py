@@ -3,7 +3,7 @@ import pyautogui
 import time
 
 from bot.ai.timed_monte_carlo_ai import TimedMonteCarloAi
-from bot.game.board import Board
+from bot.game.board_2048 import Board2048
 
 
 class Cords:
@@ -63,12 +63,12 @@ def get_grid():
             else:
                 current_grid[row_index][cell_index] = pow(2, pos)
 
-    return Board(current_grid)
+    return Board2048(current_grid)
 
 
 def main():
     board = get_grid()
-    while not board.is_game_over:
+    while board.get_moves():
         direction = TimedMonteCarloAi.get_next_move(board)
         if direction == "UP":
             pyautogui.keyDown("up")

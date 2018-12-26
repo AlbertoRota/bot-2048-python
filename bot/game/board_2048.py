@@ -1,6 +1,7 @@
 import random
 
 from bot.game.board_abc import BoardABC
+from bot.fitness.fitness_2048 import Fitness2048
 
 
 class Board2048(BoardABC):
@@ -9,7 +10,7 @@ class Board2048(BoardABC):
     MOVE_RIGHT  = 2
     MOVE_UP     = 3
 
-    def __init__(self, grid: [[int]] = None, initialize_grid: bool = False, score: int = 0):
+    def __init__(self, grid: [[int]] = None, initialize: bool = False, score: int = 0):
         super().__init__()
 
         if not grid:
@@ -17,18 +18,19 @@ class Board2048(BoardABC):
         else:
             self.grid = grid
 
-        if initialize_grid:
+        if initialize:
             self.spawn_tile()
             self.spawn_tile()
 
         self.score = score
 
         self.cached_moves = None
+        self.cached_fitness = None
 
     def clone(self) -> "Board2048":
         return Board2048(grid=self.grid.copy(), score=self.score)
 
-    def do_move(self, move, spawn_tile: bool = False):
+    def do_move(self, move: int, spawn_tile: bool):
         rotated_grid = self.rotate_grid(move)
         for i, row in enumerate(rotated_grid):
             self.grid[i], score_inc = Board2048.swipe_row_left(row)
@@ -39,6 +41,7 @@ class Board2048(BoardABC):
             self.spawn_tile()
 
         self.cached_moves = None
+        self.cached_fitness = None
 
     def get_moves(self) -> [int]:
         if self.cached_moves is None:
@@ -86,8 +89,27 @@ class Board2048(BoardABC):
 
         return self.cached_moves
 
+    def do_chance_move(self, chance_move: (float, (int, int), int)):
+        cell = chance_move[1]
+        value = chance_move[2]
+        self.grid[cell[0]][cell[1]] = value
+
+        self.cached_moves = None
+        self.cached_fitness = None
+
+    def get_chance_moves(self) -> [(float, (int, int), int)]:
+        grid = self.grid
+        zero_list = [(i, j) for i, row in enumerate(grid) for j, cell in enumerate(row) if cell == 0]
+        num_zeros = len(zero_list)
+        return [(chance / num_zeros, (i, j), val) for i, j in zero_list for chance, val in [(0.9, 2), (0.1, 4)]]
+
     def get_result(self) -> float:
         return self.score
+
+    def get_fitness(self) -> float:
+        if not self.cached_fitness:
+            self.cached_fitness = Fitness2048.calculate_fitness(self.grid, self.get_moves())
+        return self.cached_fitness
 
     def __repr__(self) -> str:
         return "Grid: {}\nValid moves: {}\nScore: {}".format(
