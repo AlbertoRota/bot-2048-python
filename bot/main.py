@@ -37,9 +37,9 @@ def main():
     Benchmark.run(MonteCarloAi, max_runs=2, max_secs=999999999, parallel=True)
     print()
 
-    # print("TimedMonteCarlo AI:")
-    # Benchmark.run(TimedMonteCarloAi, max_runs=2, max_secs=999999999, parallel=False)
-    # print()
+    print("TimedMonteCarlo AI:")
+    Benchmark.run(TimedMonteCarloAi, max_runs=2, max_secs=999999999, parallel=False)
+    print()
 
 
 if __name__ == '__main__':
