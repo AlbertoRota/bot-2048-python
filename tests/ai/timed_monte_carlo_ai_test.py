@@ -10,5 +10,5 @@ from bot.ai.timed_monte_carlo_ai import TimedMonteCarloAi
 class TestGameMethods(unittest.TestCase):
     def test_random_ai(self):
         print("TimedMonteCarlo AI:")
-        Benchmark.run(TimedMonteCarloAi, max_secs=10, parallel=False)
+        Benchmark.run(TimedMonteCarloAi, board_size=3, max_secs=10)
         print()

@@ -17,6 +17,7 @@ class Fitness2048:
 
     @staticmethod
     def calculate_fitness(grid: [[int]], moves: [int]) -> float:
+        grid_size = len(grid)
         if not moves:
             return -float("inf")
 
@@ -30,5 +31,5 @@ class Fitness2048:
             if tile > max_tile:
                 max_tile = tile
 
-        fitness = sum_score - math.pow((grid[3][0] != max_tile) * abs(grid[3][0] - max_tile), 2)
+        fitness = sum_score - math.pow((grid[grid_size - 1][0] != max_tile) * abs(grid[grid_size - 1][0] - max_tile), 2)
         return fitness
