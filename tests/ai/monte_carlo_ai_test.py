@@ -8,7 +8,6 @@ from bot.ai.monte_carlo_ai import MonteCarloAi
 
 
 class TestGameMethods(unittest.TestCase):
-    def test_random_ai(self):
-        print("MonteCarlo AI:")
-        Benchmark.run(MonteCarloAi, board_size=3, max_secs=10)
-        print()
+    def test_monte_carlo_ai(self):
+        ai = MonteCarloAi(runs=200)
+        Benchmark.run(ai, board_size=3, max_secs=10)

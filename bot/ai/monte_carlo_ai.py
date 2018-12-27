@@ -5,20 +5,26 @@ from bot.game.board_abc import BoardABC
 
 
 class MonteCarloAi(AiAbc):
-    @staticmethod
-    def get_next_move(board: BoardABC):
+    def __init__(self, runs: int = 200):
+        super().__init__()
+        self.runs = runs
+
+    def get_next_move(self, board: BoardABC):
         valid_moves = board.get_moves()
         best_score = 0
         best_move = None
 
-        runs = 100 // len(valid_moves)
+        runs_per_move = self.runs // len(valid_moves)
         for move in valid_moves:
-            move_score = MonteCarloAi.run_random_games(board, move, runs)
+            move_score = MonteCarloAi.run_random_games(board, move, runs_per_move)
             if move_score > best_score:
                 best_score = move_score
                 best_move = move
 
         return best_move
+
+    def __repr__(self) -> str:
+        return "MonteCarloAi(runs = {})".format(self.runs)
 
     @staticmethod
     def run_random_games(board: BoardABC, initial_move: int, runs: int) -> float:

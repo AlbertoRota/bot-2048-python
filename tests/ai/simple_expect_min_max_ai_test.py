@@ -8,7 +8,6 @@ from bot.ai.simple_expect_min_max_ai import SimpleExpectMinMaxAi
 
 
 class TestGameMethods(unittest.TestCase):
-    def test_random_ai(self):
-        print("SimpleExpectMinMax AI:")
-        Benchmark.run(SimpleExpectMinMaxAi, board_size=3, max_secs=10)
-        print()
+    def test_simple_expect_min_max_ai(self):
+        ai = SimpleExpectMinMaxAi(search_depth=7, min_chance=0.05, max_acc_chance=0.3)
+        Benchmark.run(ai, board_size=3, max_secs=10)
