@@ -10,5 +10,5 @@ from bot.ai.simple_expect_min_max_ai import SimpleExpectMinMaxAi
 class TestGameMethods(unittest.TestCase):
     def test_random_ai(self):
         print("SimpleExpectMinMax AI:")
-        Benchmark.run(SimpleExpectMinMaxAi, max_secs=10, parallel=False)
+        Benchmark.run(SimpleExpectMinMaxAi, board_size=3, max_secs=10)
         print()

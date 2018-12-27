@@ -10,5 +10,5 @@ from bot.ai.greedy_ai import GreedyAi
 class TestGameMethods(unittest.TestCase):
     def test_random_ai(self):
         print("Greedy AI:")
-        Benchmark.run(GreedyAi, max_secs=10, parallel=False)
+        Benchmark.run(GreedyAi, board_size=3, max_secs=10)
         print()
