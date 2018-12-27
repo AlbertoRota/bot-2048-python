@@ -14,6 +14,7 @@ class Benchmark(object):
         runs, secs = 0, 0
         acc_score, acc_moves = 0, 0
         max_tiles = Counter()
+        print("AI: " + str(ai))
 
         # Run all possible games
         while runs < max_runs and secs <= max_secs:
@@ -42,6 +43,7 @@ class Benchmark(object):
         ))
         for number, times in sorted(max_tiles.items()):
             print(str(number) + ": " + str(times) + " - ({0:.2f}%)".format((times/runs)*100))
+        print(flush=True)
 
     @staticmethod
     def __run_game__(ai: AiAbc, board_size: int) -> (BoardABC, int, float):

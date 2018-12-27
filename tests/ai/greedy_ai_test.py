@@ -8,7 +8,6 @@ from bot.ai.greedy_ai import GreedyAi
 
 
 class TestGameMethods(unittest.TestCase):
-    def test_random_ai(self):
-        print("Greedy AI:")
-        Benchmark.run(GreedyAi, board_size=3, max_secs=10)
-        print()
+    def test_greedy_ai(self):
+        ai = GreedyAi()
+        Benchmark.run(ai, board_size=3, max_secs=10)
