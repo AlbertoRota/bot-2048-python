@@ -49,8 +49,8 @@ class Board2048(BoardABC):
         Board2048.idx_to_row = []
         Board2048.row_to_idx = {}
 
-        values = [0] + [2 ** x for x in range(1, (size * size - 1))]
-        max_cell = values[size * size - 2]
+        values = [0] + [2 ** x for x in range(1, (size * size + 1))]
+        max_cell = values[len(values) - 1]
 
         # TODO: Clarify, it does the same as the commented code
         Board2048.foo_recursive(values, size)
