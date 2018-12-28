@@ -2,6 +2,7 @@ import random
 
 from bot.game.board_abc import BoardABC
 from bot.fitness.fitness_2048 import Fitness2048
+from bot.tables.row import Row
 
 
 class Board2048(BoardABC):
@@ -9,6 +10,12 @@ class Board2048(BoardABC):
     MOVE_DOWN   = 1
     MOVE_RIGHT  = 2
     MOVE_UP     = 3
+    ALL_MOVES = (MOVE_LEFT, MOVE_DOWN, MOVE_RIGHT, MOVE_UP)
+
+    idx_to_row = []
+    row_to_idx = {}
+    move_table = {}
+    move_table_grid_size = 0
 
     def __init__(self, grid: [[int]] = None, initialize: bool = False, score: int = 0):
         super().__init__()
@@ -24,8 +31,63 @@ class Board2048(BoardABC):
 
         self.score = score
 
+        if not Board2048.move_table or len(grid[0]) != Board2048.move_table_grid_size:
+            Board2048.init_move_table(len(grid[0]))
+
+        if len(self.grid) == 3:
+            self.rot_90, self.rot_180, self.rot_270 = Board2048.rot_3x3_90, Board2048.rot_3x3_180, Board2048.rot_3x3_270
+        elif len(self.grid) == 4:
+            self.rot_90, self.rot_180, self.rot_270 = Board2048.rot_4x4_90, Board2048.rot_4x4_180, Board2048.rot_4x4_270
+
         self.cached_moves = None
         self.cached_fitness = None
+
+    @staticmethod
+    def init_move_table(size: int):
+        Board2048.move_table_grid_size = size
+        Board2048.move_table = {}
+        Board2048.idx_to_row = []
+        Board2048.row_to_idx = {}
+
+        values = [0] + [2 ** x for x in range(1, (size * size + 1))]
+        max_cell = values[len(values) - 1]
+
+        # TODO: Clarify, it does the same as the commented code
+        Board2048.foo_recursive(values, size)
+        # idx = 0
+        # for a in values:
+        #     for b in values:
+        #         for c in values:
+        #             for d in values:
+        #                 row = a, b, c, d
+        #                 Board2048.idx_to_row.append(row)
+        #                 Board2048.row_to_idx[row] = idx
+        #                 idx += 1
+
+        for idx, row in enumerate(Board2048.idx_to_row):
+            row_moved = tuple(Board2048.swipe_row_left(row))
+            if max(row_moved[0]) > max_cell:
+                Board2048.move_table[idx] = -1
+            else:
+                Board2048.move_table[idx] = Board2048.row_to_idx[tuple(row_moved[0])]
+                Board2048.move_table[row] = Row(row)
+
+    @staticmethod
+    def foo_recursive(values, size):
+        Board2048.foo_recursion(values, (), size, 0)
+
+    @staticmethod
+    def foo_recursion(values, row, depth, idx):
+        if depth == 0:
+            Board2048.idx_to_row.append(row)
+            Board2048.row_to_idx[row] = idx
+            idx += 1
+            return idx
+        else:
+            for value in values:
+                new_row = row + (value,)
+                idx = Board2048.foo_recursion(values, new_row, depth - 1, idx)
+            return idx
 
     def clone(self) -> "Board2048":
         return Board2048(grid=self.grid.copy(), score=self.score)
@@ -33,7 +95,10 @@ class Board2048(BoardABC):
     def do_move(self, move: int, spawn_tile: bool):
         rotated_grid = self.rotate_grid(move)
         for i, row in enumerate(rotated_grid):
-            self.grid[i], score_inc = Board2048.swipe_row_left(row)
+            aux = Board2048.move_table[tuple(row)]
+            moved_row = aux.moved_left
+            score_inc = aux.score_left
+            self.grid[i] = moved_row.copy()
             self.score += score_inc
         self.grid = self.rotate_grid(4 - move)
 
@@ -47,44 +112,32 @@ class Board2048(BoardABC):
         if self.cached_moves is None:
             valid_moves = {}
 
-            # 0 = LEFT and 2 = RIGHT
-            for row in self.grid:
-                for i in range(len(row) - 1):
-                    first_tile, second_tile = row[i], row[i + 1]
-                    if first_tile != 0:
-                        if first_tile == second_tile:
-                            valid_moves[0] = True
-                            valid_moves[2] = True
-                            break
-
-                    if first_tile != 0 and second_tile == 0:
-                        valid_moves[2] = True
-
-                    if second_tile != 0 and first_tile == 0:
-                        valid_moves[0] = True
-
-                if 0 in valid_moves and 2 in valid_moves:
+            left_right_grid = self.rotate_grid(Board2048.MOVE_LEFT)
+            for row in left_right_grid:
+                table_row = Board2048.move_table[tuple(row)]
+                if table_row.can_move_left:
+                    valid_moves[Board2048.MOVE_LEFT] = True
+                if table_row.can_move_right:
+                    valid_moves[Board2048.MOVE_RIGHT] = True
+                if Board2048.MOVE_LEFT in valid_moves and Board2048.MOVE_RIGHT in valid_moves:
                     break
 
-            # 1 = DOWN and 3 = UP
-            for col in self.rotate_grid(1):
-                for i in range(len(col) - 1):
-                    first_tile, second_tile = col[i], col[i + 1]
-                    if first_tile != 0:
-                        if first_tile == second_tile:
-                            valid_moves[3] = True
-                            valid_moves[1] = True
-                            break
-
-                    if first_tile != 0 and second_tile == 0:
-                        valid_moves[3] = True
-
-                    if second_tile != 0 and first_tile == 0:
-                        valid_moves[1] = True
-
-                if 3 in valid_moves and 1 in valid_moves:
+            down_up_grid = self.rotate_grid(Board2048.MOVE_DOWN)
+            for row in down_up_grid:
+                table_row = Board2048.move_table[tuple(row)]
+                if table_row.can_move_left:
+                    valid_moves[Board2048.MOVE_DOWN] = True
+                if table_row.can_move_right:
+                    valid_moves[Board2048.MOVE_UP] = True
+                if Board2048.MOVE_DOWN in valid_moves and Board2048.MOVE_UP in valid_moves:
                     break
 
+            # for move in Board2048.ALL_MOVES:
+            #     rotated_grid = self.rotate_grid(move)
+            #     for row in rotated_grid:
+            #         if Board2048.move_table[tuple(row)].can_move_left:
+            #             valid_moves[move] = True
+            #             break
             self.cached_moves = list(valid_moves.keys())
 
         return self.cached_moves
@@ -133,17 +186,71 @@ class Board2048(BoardABC):
         if times == 0 or times == 4:
             rotated_grid = grid.copy()
         elif times == 1:
-            rotated_grid = list(map(list, zip(*grid[::-1])))
+            rotated_grid = self.rot_90(grid)
         elif times == 2:
-            rotated_grid = list(map(list, zip(*grid[::-1])))
-            rotated_grid = list(map(list, zip(*rotated_grid[::-1])))
+            rotated_grid = self.rot_180(grid)
         elif times == 3:
-            rotated_grid = list(map(list, zip(*grid[::-1])))
-            rotated_grid = list(map(list, zip(*rotated_grid[::-1])))
-            rotated_grid = list(map(list, zip(*rotated_grid[::-1])))
+            rotated_grid = self.rot_270(grid)
         else:
             raise NotImplementedError("Only values between 0 and 4 are supported.")
         return rotated_grid
+
+    @staticmethod
+    def rot_3x3_90(grid):
+        g = grid
+        return [
+            [g[2][0], g[1][0], g[0][0]],
+            [g[2][1], g[1][1], g[0][1]],
+            [g[2][2], g[1][2], g[0][2]]
+        ]
+
+    @staticmethod
+    def rot_4x4_90(grid):
+        g = grid
+        return [
+            [g[3][0], g[2][0], g[1][0], g[0][0]],
+            [g[3][1], g[2][1], g[1][1], g[0][1]],
+            [g[3][2], g[2][2], g[1][2], g[0][2]],
+            [g[3][3], g[2][3], g[1][3], g[0][3]]
+        ]
+
+    @staticmethod
+    def rot_3x3_180(grid):
+        g = grid
+        return [
+            [g[2][2], g[2][1], g[2][0]],
+            [g[1][2], g[1][1], g[1][0]],
+            [g[0][2], g[0][1], g[0][0]]
+        ]
+
+    @staticmethod
+    def rot_4x4_180(grid):
+        g = grid
+        return [
+            [g[3][3], g[3][2], g[3][1], g[3][0]],
+            [g[2][3], g[2][2], g[2][1], g[2][0]],
+            [g[1][3], g[1][2], g[1][1], g[1][0]],
+            [g[0][3], g[0][2], g[0][1], g[0][0]]
+        ]
+
+    @staticmethod
+    def rot_3x3_270(grid):
+        g = grid
+        return [
+            [g[0][2], g[1][2], g[2][2]],
+            [g[0][1], g[1][1], g[2][1]],
+            [g[0][0], g[1][0], g[2][0]]
+        ]
+
+    @staticmethod
+    def rot_4x4_270(grid):
+        g = grid
+        return [
+            [g[0][3], g[1][3], g[2][3], g[3][3]],
+            [g[0][2], g[1][2], g[2][2], g[3][2]],
+            [g[0][1], g[1][1], g[2][1], g[3][1]],
+            [g[0][0], g[1][0], g[2][0], g[3][0]]
+        ]
 
     @staticmethod
     def swipe_row_left(row: [int]) -> ([int], int):

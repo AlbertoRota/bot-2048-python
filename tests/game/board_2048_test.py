@@ -68,11 +68,11 @@ class TestGameMethods(unittest.TestCase):
         board_2048_3x3_all = Board2048([[0, 2, 0], [2, 2, 2], [2, 4, 8]])
         self.assertCountEqual(board_2048_3x3_all.get_moves(), [left, right, up, down])
 
-        board_2048_2x2_no_left = Board2048([[2, 4], [2, 0]])
-        self.assertCountEqual(board_2048_2x2_no_left.get_moves(), [right, up, down])
+        board_2048_3x3_no_left = Board2048([[2, 4, 2], [2, 4, 2], [2, 8, 0]])
+        self.assertCountEqual(board_2048_3x3_no_left.get_moves(), [right, up, down])
 
-        board_2048_2x2_no_right = Board2048([[0, 2], [4, 2]])
-        self.assertCountEqual(board_2048_2x2_no_right.get_moves(), [left, up, down])
+        board_2048_3x3_no_right = Board2048([[0, 2, 4], [4, 2, 8], [4, 2, 8]])
+        self.assertCountEqual(board_2048_3x3_no_right.get_moves(), [left, up, down])
 
     def test_is_game_over(self):
         board_2048_ok = Board2048([[2, 2, 0, 4], [4, 8, 0, 2], [2, 4, 0, 4], [4, 8, 0, 8]])
