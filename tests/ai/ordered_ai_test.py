@@ -7,7 +7,7 @@ from bot.benchmark.benchmark import Benchmark
 from bot.ai.ordered_ai import OrderedAi
 
 
-class TestGameMethods(unittest.TestCase):
+class TestOrderedAi(unittest.TestCase):
     def test_ordered_ai(self):
         ai = OrderedAi()
         Benchmark.run(ai, board_size=3, max_secs=10)
