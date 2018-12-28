@@ -2,6 +2,7 @@ import random
 
 from bot.game.board_abc import BoardABC
 from bot.fitness.fitness_2048 import Fitness2048
+from bot.tables.row import Row
 
 
 class Board2048(BoardABC):
@@ -69,7 +70,7 @@ class Board2048(BoardABC):
                 Board2048.move_table[idx] = -1
             else:
                 Board2048.move_table[idx] = Board2048.row_to_idx[tuple(row_moved[0])]
-                Board2048.move_table[row] = row_moved
+                Board2048.move_table[row] = Row(row)
 
     @staticmethod
     def foo_recursive(values, size):
@@ -94,7 +95,9 @@ class Board2048(BoardABC):
     def do_move(self, move: int, spawn_tile: bool):
         rotated_grid = self.rotate_grid(move)
         for i, row in enumerate(rotated_grid):
-            moved_row, score_inc = Board2048.move_table[tuple(row)]
+            aux = Board2048.move_table[tuple(row)]
+            moved_row = aux.moved_left
+            score_inc = aux.score_left
             self.grid[i] = moved_row.copy()
             self.score += score_inc
         self.grid = self.rotate_grid(4 - move)
@@ -108,12 +111,33 @@ class Board2048(BoardABC):
     def get_moves(self) -> [int]:
         if self.cached_moves is None:
             valid_moves = {}
-            for move in Board2048.ALL_MOVES:
-                rotated_grid = self.rotate_grid(move)
-                for row in rotated_grid:
-                    if row != Board2048.move_table[tuple(row)][0]:
-                        valid_moves[move] = True
-                        break
+
+            left_right_grid = self.rotate_grid(Board2048.MOVE_LEFT)
+            for row in left_right_grid:
+                table_row = Board2048.move_table[tuple(row)]
+                if table_row.can_move_left:
+                    valid_moves[Board2048.MOVE_LEFT] = True
+                if table_row.can_move_right:
+                    valid_moves[Board2048.MOVE_RIGHT] = True
+                if Board2048.MOVE_LEFT in valid_moves and Board2048.MOVE_RIGHT in valid_moves:
+                    break
+
+            down_up_grid = self.rotate_grid(Board2048.MOVE_DOWN)
+            for row in down_up_grid:
+                table_row = Board2048.move_table[tuple(row)]
+                if table_row.can_move_left:
+                    valid_moves[Board2048.MOVE_DOWN] = True
+                if table_row.can_move_right:
+                    valid_moves[Board2048.MOVE_UP] = True
+                if Board2048.MOVE_DOWN in valid_moves and Board2048.MOVE_UP in valid_moves:
+                    break
+
+            # for move in Board2048.ALL_MOVES:
+            #     rotated_grid = self.rotate_grid(move)
+            #     for row in rotated_grid:
+            #         if Board2048.move_table[tuple(row)].can_move_left:
+            #             valid_moves[move] = True
+            #             break
             self.cached_moves = list(valid_moves.keys())
 
         return self.cached_moves
