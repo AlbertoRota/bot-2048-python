@@ -1,87 +1,39 @@
 class Fitness2048:
-    @staticmethod
-    def calculate_fitness(grid: [[int]], moves: [int]) -> float:
-        if not moves:
-            return -float("inf")
-
-        score_monotone = Fitness2048.eval_monotone(grid)
-        score_smooth = Fitness2048.eval_smoothness(grid)
-        score_free = Fitness2048.eval_free(grid)
-
-        score = 0
-        score += score_smooth
-        score += score_monotone
-        score += score_free
-
-        return score
 
     @staticmethod
-    def eval_monotone(grid):
-        grid_rows = len(grid)
-        grid_cols = len(grid[0])
+    def eval_row_monotone(row):
+        row_cells = len(row)
 
-        left = right = 0
-        for x in range(grid_rows):
-            m = 0
-            for y in range(grid_cols - 1):
-                if grid[x][y] and grid[x][y] >= grid[x][y + 1]:
-                    m += 1
-                    left += m ** 2 * 4
-                else:
-                    left -= abs((grid[x][y] or 0) - (grid[x][y + 1] or 0)) * 1.5
-                    m = 0
+        left_row = row
+        left_score, left_consecutive = 0, 0
+        for i in range(row_cells - 1):
+            if left_row[i] and left_row[i] >= left_row[i + 1]:
+                left_consecutive += 1
+                left_score += left_consecutive ** 2 * 4
+            else:
+                left_score -= abs(left_row[i] - left_row[i + 1]) * 1.5
+                left_consecutive = 0
 
-            m = 0
-            for y in range(grid_cols - 1):
-                if grid[x][y] <= grid[x][y + 1] and grid[x][y + 1]:
-                    m += 1
-                    right += m ** 2 * 4
-                else:
-                    right -= abs((grid[x][y] or 0) - (grid[x][y + 1] or 0)) * 1.5
-                    m = 0
-        left_right = max(left, right)
+        right_row = list(reversed(row))
+        right_score, right_consecutive = 0, 0
+        for i in range(row_cells - 1):
+            if right_row[i] and right_row[i] >= right_row[i + 1]:
+                right_consecutive += 1
+                right_score += right_consecutive ** 2 * 4
+            else:
+                right_score -= abs(right_row[i] - right_row[i + 1]) * 1.5
+                right_consecutive = 0
 
-        up = down = 0
-        for y in range(grid_cols):
-            m = 0
-            for x in range(grid_rows - 1):
-                if grid[x][y] and grid[x][y] >= grid[x + 1][y]:
-                    m += 1
-                    up += m ** 2 * 4
-                else:
-                    up -= abs((grid[x][y] or 0) - (grid[x + 1][y] or 0)) * 1.5
-                    m = 0
-
-            m = 0
-            for x in range(grid_rows - 1):
-                if grid[x][y] <= grid[x + 1][y] and grid[x + 1][y]:
-                    m += 1
-                    down += m ** 2 * 4
-                else:
-                    down -= abs((grid[x][y] or 0) - (grid[x + 1][y] or 0)) * 1.5
-                    m = 0
-        up_down = max(up, down)
-
-        return left_right + up_down
+        return max(left_score, right_score)
 
     @staticmethod
-    def eval_smoothness(grid):
-        grid_rows = len(grid)
-        grid_cols = len(grid[0])
-
+    def eval_row_smoothness(row):
+        row_cells = len(row)
         score_smooth = 0
-        for x in range(grid_rows):
-            for y in range(grid_cols):
-                s = 99999999999
-                if x > 0:
-                    s = min(s, abs((grid[x][y] or 2) - (grid[x - 1][y] or 2)))
-                if y > 0:
-                    s = min(s, abs((grid[x][y] or 2) - (grid[x][y - 1] or 2)))
-                if x < grid_rows - 1:
-                    s = min(s, abs((grid[x][y] or 2) - (grid[x + 1][y] or 2)))
-                if y < grid_cols - 1:
-                    s = min(s, abs((grid[x][y] or 2) - (grid[x][y + 1] or 2)))
-                score_smooth -= s
+
+        for i in range(row_cells - 1):
+                score_smooth -= abs((row[i] or 2) - (row[i + 1] or 2))
+
         return score_smooth
 
     @staticmethod
