@@ -6,10 +6,7 @@ from bot.tables.row import Row
 
 
 class Board2048(BoardABC):
-    MOVE_LEFT   = 0
-    MOVE_DOWN   = 1
-    MOVE_RIGHT  = 2
-    MOVE_UP     = 3
+    MOVE_LEFT, MOVE_DOWN, MOVE_RIGHT, MOVE_UP = 0, 1, 2, 3
     ALL_MOVES = (MOVE_LEFT, MOVE_DOWN, MOVE_RIGHT, MOVE_UP)
 
     idx_to_row = []
@@ -132,12 +129,6 @@ class Board2048(BoardABC):
                 if Board2048.MOVE_DOWN in valid_moves and Board2048.MOVE_UP in valid_moves:
                     break
 
-            # for move in Board2048.ALL_MOVES:
-            #     rotated_grid = self.rotate_grid(move)
-            #     for row in rotated_grid:
-            #         if Board2048.move_table[tuple(row)].can_move_left:
-            #             valid_moves[move] = True
-            #             break
             self.cached_moves = list(valid_moves.keys())
 
         return self.cached_moves
@@ -161,7 +152,30 @@ class Board2048(BoardABC):
 
     def get_fitness(self) -> float:
         if not self.cached_fitness:
-            self.cached_fitness = Fitness2048.calculate_fitness(self.grid, self.get_moves())
+            if self.get_moves():
+                score_free = Fitness2048.eval_free(self.grid)
+
+                score_monotone_lr = 0
+                score_smoothness_lr = 0
+                for row in self.grid:
+                    table_row = Board2048.move_table[tuple(row)]
+                    score_monotone_lr += table_row.monotone_fitness
+                    score_smoothness_lr += table_row.smoothness_fitness
+
+                score_monotone_ud = 0
+                score_smoothness_ud = 0
+                for column in self.rot_90(self.grid):
+                    table_column = Board2048.move_table[tuple(column)]
+                    score_monotone_ud += table_column.monotone_fitness
+                    score_smoothness_ud += table_column.smoothness_fitness
+
+                score_monotone = score_monotone_lr + score_monotone_ud
+                score_smoothness = (score_smoothness_lr + score_smoothness_ud) / (len(self.grid) * 2)
+
+                self.cached_fitness = score_free + score_monotone + score_smoothness
+            else:
+                self.cached_fitness = -float("inf")
+
         return self.cached_fitness
 
     def __repr__(self) -> str:

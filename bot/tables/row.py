@@ -1,3 +1,6 @@
+from bot.fitness.fitness_2048 import Fitness2048
+
+
 class Row:
     def __init__(self, row: [[int]]):
         self.moved_left, self.score_left = Row.swipe_row_left(row)
@@ -8,8 +11,8 @@ class Row:
 
         self.zeroes = [i for i, cell in enumerate(row) if cell == 0]
 
-        self.monotone_fitness = 0
-        self.smoothness_fitness = 0
+        self.monotone_fitness = Fitness2048.eval_row_monotone(row)
+        self.smoothness_fitness = Fitness2048.eval_row_smoothness(row)
         self.zeroes_fitness = 0
 
     @staticmethod
