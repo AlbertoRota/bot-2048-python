@@ -30,21 +30,37 @@ class TestGameMethods(unittest.TestCase):
         )
 
     def test_swipe_grid(self):
-        board_2048_3x3 = Board2048([[2, 2, 0], [0, 0, 0], [2, 4, 0]])
-        expected_3x3 = {
-            Board2048.MOVE_LEFT:    ([[4, 0, 0], [0, 0, 0], [2, 4, 0]], 4),
-            Board2048.MOVE_RIGHT:   ([[0, 0, 4], [0, 0, 0], [0, 2, 4]], 4),
-            Board2048.MOVE_DOWN:    ([[0, 0, 0], [0, 2, 0], [4, 4, 0]], 4),
-            Board2048.MOVE_UP:      ([[4, 2, 0], [0, 4, 0], [0, 0, 0]], 4)
-        }
-        self.__check_moves__(board_2048_3x3, expected_3x3)
-
-        board_2048_4x4 = Board2048([[2, 2, 0, 0], [0, 0, 0, 0], [2, 4, 0, 0], [2, 2, 4, 8]])
+        board_2048_4x4 = Board2048([
+            [2, 2, 0, 0],
+            [0, 0, 0, 0],
+            [2, 4, 0, 0],
+            [2, 2, 4, 8]
+        ])
         expected_4x4 = {
-            Board2048.MOVE_LEFT:    ([[4, 0, 0, 0], [0, 0, 0, 0], [2, 4, 0, 0], [4, 4, 8, 0]], 8),
-            Board2048.MOVE_RIGHT:   ([[0, 0, 0, 4], [0, 0, 0, 0], [0, 0, 2, 4], [0, 4, 4, 8]], 8),
-            Board2048.MOVE_DOWN:    ([[0, 0, 0, 0], [0, 2, 0, 0], [2, 4, 0, 0], [4, 2, 4, 8]], 4),
-            Board2048.MOVE_UP:      ([[4, 2, 4, 8], [2, 4, 0, 0], [0, 2, 0, 0], [0, 0, 0, 0]], 4)
+            Board2048.MOVE_LEFT:    ([
+                                         [4, 0, 0, 0],
+                                         [0, 0, 0, 0],
+                                         [2, 4, 0, 0],
+                                         [4, 4, 8, 0]
+                                     ], 8),
+            Board2048.MOVE_RIGHT:   ([
+                                         [0, 0, 0, 4],
+                                         [0, 0, 0, 0],
+                                         [0, 0, 2, 4],
+                                         [0, 4, 4, 8]
+                                     ], 8),
+            Board2048.MOVE_DOWN:    ([
+                                         [0, 0, 0, 0],
+                                         [0, 2, 0, 0],
+                                         [2, 4, 0, 0],
+                                         [4, 2, 4, 8]
+                                     ], 4),
+            Board2048.MOVE_UP:      ([
+                                         [4, 2, 4, 8],
+                                         [2, 4, 0, 0],
+                                         [0, 2, 0, 0],
+                                         [0, 0, 0, 0]
+                                     ], 4)
         }
         self.__check_moves__(board_2048_4x4, expected_4x4)
 
@@ -59,24 +75,70 @@ class TestGameMethods(unittest.TestCase):
     def test_is_valid_move(self):
         left, right, up, down = Board2048.MOVE_LEFT, Board2048.MOVE_RIGHT, Board2048.MOVE_UP, Board2048.MOVE_DOWN
 
-        board_2048_4x4_left_right = Board2048([[2, 2, 0, 4], [4, 8, 0, 2], [2, 4, 0, 4], [4, 8, 0, 8]])
-        self.assertCountEqual(board_2048_4x4_left_right.get_moves(), [left, right])
+        self.assertCountEqual(
+            Board2048([
+                [2, 2, 0, 4],
+                [4, 8, 0, 2],
+                [2, 4, 0, 4],
+                [4, 8, 0, 8]
+            ]).get_moves(),
+            [left, right]
+        )
 
-        board_2048_3x3_up_right = Board2048([[2, 4, 0], [4, 8, 0], [2, 4, 2]])
-        self.assertCountEqual(board_2048_3x3_up_right.get_moves(), [up, right])
+        self.assertCountEqual(
+            Board2048([
+                [2, 4, 2, 0],
+                [4, 8, 4, 0],
+                [2, 4, 2, 8],
+                [4, 8, 4, 2]
+            ]).get_moves(),
+            [up, right]
+        )
 
-        board_2048_3x3_all = Board2048([[0, 2, 0], [2, 2, 2], [2, 4, 8]])
-        self.assertCountEqual(board_2048_3x3_all.get_moves(), [left, right, up, down])
+        self.assertCountEqual(
+            Board2048([
+                [0, 2, 0, 4],
+                [2, 2, 2, 0],
+                [2, 4, 8, 8],
+                [0, 2, 0, 4]
+            ]).get_moves(),
+            [left, right, up, down]
+        )
 
-        board_2048_3x3_no_left = Board2048([[2, 4, 2], [2, 4, 2], [2, 8, 0]])
-        self.assertCountEqual(board_2048_3x3_no_left.get_moves(), [right, up, down])
+        self.assertCountEqual(
+            Board2048([
+                [2, 4, 8, 2],
+                [2, 4, 8, 2],
+                [2, 4, 8, 2],
+                [2, 8, 4, 0]
+            ]).get_moves(),
+            [right, up, down]
+        )
 
-        board_2048_3x3_no_right = Board2048([[0, 2, 4], [4, 2, 8], [4, 2, 8]])
-        self.assertCountEqual(board_2048_3x3_no_right.get_moves(), [left, up, down])
+        self.assertCountEqual(
+            Board2048([
+                [0, 2, 4, 8],
+                [4, 2, 8, 4],
+                [4, 2, 8, 4],
+                [4, 2, 8, 4]
+            ]).get_moves(),
+            [left, up, down]
+        )
 
     def test_is_game_over(self):
-        board_2048_ok = Board2048([[2, 2, 0, 4], [4, 8, 0, 2], [2, 4, 0, 4], [4, 8, 0, 8]])
-        board_2048_ko = Board2048([[2, 4, 2, 4], [4, 8, 4, 2], [2, 4, 8, 4], [4, 8, 2, 8]])
-
-        self.assertTrue(board_2048_ok.get_moves())
-        self.assertFalse(board_2048_ko.get_moves())
+        self.assertTrue(
+            Board2048([
+                [2, 2, 0, 4],
+                [4, 8, 0, 2],
+                [2, 4, 0, 4],
+                [4, 8, 0, 8]
+            ]).get_moves()
+        )
+        self.assertFalse(
+            Board2048([
+                [2, 4, 2, 4],
+                [4, 8, 4, 2],
+                [2, 4, 8, 4],
+                [4, 8, 2, 8]
+            ]).get_moves()
+        )
