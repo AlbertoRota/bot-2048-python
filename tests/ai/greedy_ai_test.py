@@ -10,4 +10,4 @@ from bot.ai.greedy_ai import GreedyAi
 class TestGreedyAi(unittest.TestCase):
     def test_greedy_ai(self):
         ai = GreedyAi()
-        Benchmark.run(ai, board_size=3, max_secs=10)
+        Benchmark.run(ai, max_secs=10)

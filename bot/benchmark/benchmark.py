@@ -9,18 +9,21 @@ from bot.game.board_2048 import Board2048
 class Benchmark(object):
 
     @staticmethod
-    def run(ai: AiAbc, board_size: int = 4, max_runs: int = 100, max_secs: int = 300):
+    def run(ai: AiAbc, max_runs: int = 100, max_secs: int = 300):
         # Initialize variables
         runs, secs = 0, 0
         acc_score, acc_moves = 0, 0
         max_tiles = Counter()
         print("AI: " + str(ai))
 
+        # Initialize board outside loop.
+        _ = Board2048()
+
         # Run all possible games
         while runs < max_runs and secs <= max_secs:
             # Run one game
             start = time.time()
-            output = Benchmark.__run_game__(ai, board_size)
+            output = Benchmark.__run_game__(ai)
             secs += time.time() - start
 
             # Add game results to the accumulated ones
@@ -46,10 +49,10 @@ class Benchmark(object):
         print(flush=True)
 
     @staticmethod
-    def __run_game__(ai: AiAbc, board_size: int) -> (BoardABC, int, float):
+    def __run_game__(ai: AiAbc) -> (BoardABC, int, float):
         # Initialize variables
         num_of_movements = 0
-        board = Board2048(grid=[[0 for _ in range(board_size)] for _ in range(board_size)], initialize=True)
+        board = Board2048(initialize=True)
 
         # Run a game to it's end
         while board.get_moves():

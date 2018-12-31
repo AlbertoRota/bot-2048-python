@@ -17,10 +17,7 @@ class Board2048(BoardABC):
     def __init__(self, grid: [[int]] = None, initialize: bool = False, score: int = 0):
         super().__init__()
 
-        if not grid:
-            self.grid = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
-        else:
-            self.grid = grid
+        self.grid = grid or [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
 
         if initialize:
             self.spawn_tile()
@@ -28,38 +25,26 @@ class Board2048(BoardABC):
 
         self.score = score
 
-        if not Board2048.move_table or len(grid[0]) != Board2048.move_table_grid_size:
-            Board2048.init_move_table(len(grid[0]))
-
-        if len(self.grid) == 3:
-            self.rot_90, self.rot_180, self.rot_270 = Board2048.rot_3x3_90, Board2048.rot_3x3_180, Board2048.rot_3x3_270
-        elif len(self.grid) == 4:
-            self.rot_90, self.rot_180, self.rot_270 = Board2048.rot_4x4_90, Board2048.rot_4x4_180, Board2048.rot_4x4_270
+        if not Board2048.move_table:
+            Board2048.init_move_table()
 
         self.cached_moves = None
         self.cached_fitness = None
 
     @staticmethod
-    def init_move_table(size: int):
-        Board2048.move_table_grid_size = size
-        Board2048.move_table = {}
-        Board2048.idx_to_row = []
-        Board2048.row_to_idx = {}
-
-        values = [0] + [2 ** x for x in range(1, (size * size + 1))]
+    def init_move_table():
+        values = [0] + [2 ** x for x in range(1, 16)]
         max_cell = values[len(values) - 1]
 
-        # TODO: Clarify, it does the same as the commented code
-        Board2048.foo_recursive(values, size)
-        # idx = 0
-        # for a in values:
-        #     for b in values:
-        #         for c in values:
-        #             for d in values:
-        #                 row = a, b, c, d
-        #                 Board2048.idx_to_row.append(row)
-        #                 Board2048.row_to_idx[row] = idx
-        #                 idx += 1
+        idx = 0
+        for cell_1 in values:
+            for cell_2 in values:
+                for cell_3 in values:
+                    for cell_4 in values:
+                        row = cell_1, cell_2, cell_3, cell_4
+                        Board2048.idx_to_row.append(row)
+                        Board2048.row_to_idx[row] = idx
+                        idx += 1
 
         for idx, row in enumerate(Board2048.idx_to_row):
             row_moved = tuple(Board2048.swipe_row_left(row))
@@ -68,23 +53,6 @@ class Board2048(BoardABC):
             else:
                 Board2048.move_table[idx] = Board2048.row_to_idx[tuple(row_moved[0])]
                 Board2048.move_table[row] = Row(row)
-
-    @staticmethod
-    def foo_recursive(values, size):
-        Board2048.foo_recursion(values, (), size, 0)
-
-    @staticmethod
-    def foo_recursion(values, row, depth, idx):
-        if depth == 0:
-            Board2048.idx_to_row.append(row)
-            Board2048.row_to_idx[row] = idx
-            idx += 1
-            return idx
-        else:
-            for value in values:
-                new_row = row + (value,)
-                idx = Board2048.foo_recursion(values, new_row, depth - 1, idx)
-            return idx
 
     def clone(self) -> "Board2048":
         return Board2048(grid=self.grid.copy(), score=self.score)
@@ -210,16 +178,7 @@ class Board2048(BoardABC):
         return rotated_grid
 
     @staticmethod
-    def rot_3x3_90(grid):
-        g = grid
-        return [
-            [g[2][0], g[1][0], g[0][0]],
-            [g[2][1], g[1][1], g[0][1]],
-            [g[2][2], g[1][2], g[0][2]]
-        ]
-
-    @staticmethod
-    def rot_4x4_90(grid):
+    def rot_90(grid):
         g = grid
         return [
             [g[3][0], g[2][0], g[1][0], g[0][0]],
@@ -229,16 +188,7 @@ class Board2048(BoardABC):
         ]
 
     @staticmethod
-    def rot_3x3_180(grid):
-        g = grid
-        return [
-            [g[2][2], g[2][1], g[2][0]],
-            [g[1][2], g[1][1], g[1][0]],
-            [g[0][2], g[0][1], g[0][0]]
-        ]
-
-    @staticmethod
-    def rot_4x4_180(grid):
+    def rot_180(grid):
         g = grid
         return [
             [g[3][3], g[3][2], g[3][1], g[3][0]],
@@ -248,16 +198,7 @@ class Board2048(BoardABC):
         ]
 
     @staticmethod
-    def rot_3x3_270(grid):
-        g = grid
-        return [
-            [g[0][2], g[1][2], g[2][2]],
-            [g[0][1], g[1][1], g[2][1]],
-            [g[0][0], g[1][0], g[2][0]]
-        ]
-
-    @staticmethod
-    def rot_4x4_270(grid):
+    def rot_270(grid):
         g = grid
         return [
             [g[0][3], g[1][3], g[2][3], g[3][3]],

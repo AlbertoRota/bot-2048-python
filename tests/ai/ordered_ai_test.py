@@ -10,4 +10,4 @@ from bot.ai.ordered_ai import OrderedAi
 class TestOrderedAi(unittest.TestCase):
     def test_ordered_ai(self):
         ai = OrderedAi()
-        Benchmark.run(ai, board_size=3, max_secs=10)
+        Benchmark.run(ai, max_secs=10)

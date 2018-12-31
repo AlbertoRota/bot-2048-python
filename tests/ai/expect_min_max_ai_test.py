@@ -9,5 +9,5 @@ from bot.ai.expect_min_max_ai import ExpectMinMaxAi
 
 class TestExpectMinMaxAi(unittest.TestCase):
     def test_expect_min_max_ai(self):
-        ai = ExpectMinMaxAi(search_depth=5)
-        Benchmark.run(ai, board_size=3, max_secs=10)
+        ai = ExpectMinMaxAi(search_depth=2)
+        Benchmark.run(ai, max_secs=10)
