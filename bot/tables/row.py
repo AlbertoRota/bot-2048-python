@@ -13,7 +13,7 @@ class Row:
 
         self.monotone_fitness = Fitness2048.eval_row_monotone(row)
         self.smoothness_fitness = Fitness2048.eval_row_smoothness(row)
-        self.zeroes_fitness = 0
+        self.zeroes_fitness = 4 - len(self.zeroes)
 
     @staticmethod
     def swipe_row_left(row: [int]) -> ([int], int):

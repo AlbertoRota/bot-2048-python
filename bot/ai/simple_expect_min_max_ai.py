@@ -1,5 +1,6 @@
 from bot.ai.ai_abc import AiAbc
 from bot.game.board_abc import BoardABC
+from bot.game.board_2048 import Board2048
 
 
 class SimpleExpectMinMaxAi(AiAbc):
@@ -10,16 +11,17 @@ class SimpleExpectMinMaxAi(AiAbc):
         self.max_acc_chance = max_acc_chance
 
     def get_next_move(self, board: BoardABC):
-        valid_moves = board.get_moves()
-        best_movement = valid_moves[0]
+        best_movement = None
         best_movement_score = -float("inf")
-        for move in valid_moves:
+
+        for move in Board2048.ALL_MOVES:
             move_board = board.clone()
             move_board.do_move(move, False)
-            movement_score = self.__simple_expect_min_max__(move_board, self.search_depth, False)
-            if movement_score > best_movement_score:
-                best_movement_score = movement_score
-                best_movement = move
+            if move_board.grid != board.grid:
+                movement_score = self.__simple_expect_min_max__(move_board, self.search_depth, False)
+                if movement_score > best_movement_score:
+                    best_movement_score = movement_score
+                    best_movement = move
 
         return best_movement
 
@@ -29,15 +31,15 @@ class SimpleExpectMinMaxAi(AiAbc):
         )
 
     def __simple_expect_min_max__(self, board: BoardABC, depth: int, is_move: bool) -> float:
-        valid_moves = board.get_moves()
-        if not valid_moves or depth == 0:
+        if depth == 0:
             return board.get_fitness()
         elif is_move:
-            max_alpha = -float("inf")
-            for move in valid_moves:
+            max_alpha = -90000000
+            for move in Board2048.ALL_MOVES:
                 max_board = board.clone()
                 max_board.do_move(move, False)
-                max_alpha = max(max_alpha, self.__simple_expect_min_max__(max_board, depth - 1, False))
+                if max_board.grid != board.grid:
+                    max_alpha = max(max_alpha, self.__simple_expect_min_max__(max_board, depth - 1, False))
             return max_alpha
         else:
             i = 0
