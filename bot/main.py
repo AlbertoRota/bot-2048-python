@@ -9,15 +9,15 @@ from bot.ai.timed_monte_carlo_ai import TimedMonteCarloAi
 
 
 def main():
-    # Benchmark.run(RandomAi(), board_size=4, max_secs=10)
-    # Benchmark.run(OrderedAi(), board_size=4, max_secs=10)
-    # Benchmark.run(GreedyAi(), board_size=4, max_secs=10)
+    Benchmark.run(RandomAi(), max_secs=60)
+    Benchmark.run(OrderedAi(), max_secs=60)
+    Benchmark.run(GreedyAi(), max_secs=60)
 
-    Benchmark.run(ExpectMinMaxAi(search_depth=3), board_size=3, max_secs=10)
-    # Benchmark.run(SimpleExpectMinMaxAi(search_depth=7, min_chance=0.05, max_acc_chance=0.5), board_size=4, max_secs=10)
+    Benchmark.run(ExpectMinMaxAi(search_depth=5), max_secs=60)
+    Benchmark.run(SimpleExpectMinMaxAi(search_depth=7, min_chance=0.05, max_acc_chance=0.5), max_secs=60)
 
-    # Benchmark.run(MonteCarloAi(runs=200), board_size=4, max_secs=10)
-    # Benchmark.run(TimedMonteCarloAi(max_runs=400, max_sec=0.25), board_size=4, max_secs=10)
+    Benchmark.run(MonteCarloAi(runs=1000), max_secs=60)
+    Benchmark.run(TimedMonteCarloAi(max_runs=999999, max_sec=1), max_secs=60)
 
 
 if __name__ == '__main__':

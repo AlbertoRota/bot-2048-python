@@ -16,6 +16,9 @@ class Benchmark(object):
         max_tiles = Counter()
         print("AI: " + str(ai))
 
+        # Initialize board outside loop.
+        _ = Board2048()
+
         # Run all possible games
         while runs < max_runs and secs <= max_secs:
             # Run one game
