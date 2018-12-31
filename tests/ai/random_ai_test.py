@@ -10,4 +10,4 @@ from bot.ai.random_ai import RandomAi
 class TestRandomAi(unittest.TestCase):
     def test_random_ai(self):
         ai = RandomAi()
-        Benchmark.run(ai, board_size=3, max_secs=10)
+        Benchmark.run(ai, max_secs=10)

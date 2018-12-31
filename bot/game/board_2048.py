@@ -17,10 +17,7 @@ class Board2048(BoardABC):
     def __init__(self, grid: [[int]] = None, initialize: bool = False, score: int = 0):
         super().__init__()
 
-        if not grid:
-            self.grid = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
-        else:
-            self.grid = grid
+        self.grid = grid or [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
 
         if initialize:
             self.spawn_tile()
@@ -28,8 +25,8 @@ class Board2048(BoardABC):
 
         self.score = score
 
-        if not Board2048.move_table or len(grid[0]) != Board2048.move_table_grid_size:
-            Board2048.init_move_table(len(grid[0]))
+        if not Board2048.move_table or len(self.grid[0]) != Board2048.move_table_grid_size:
+            Board2048.init_move_table(len(self.grid[0]))
 
         if len(self.grid) == 3:
             self.rot_90, self.rot_180, self.rot_270 = Board2048.rot_3x3_90, Board2048.rot_3x3_180, Board2048.rot_3x3_270
