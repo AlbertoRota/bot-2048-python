@@ -7,46 +7,36 @@ INF = 100000000
 
 
 class IterativeDeepeningExpectMinMaxAi(AiAbc):
-    def __init__(self, max_depth: int = 9, max_sec: float = 1.0):
+    def __init__(self, max_sec: float = 1.0):
         super().__init__()
-        self.max_depth = max_depth
         self.max_sec = max_sec
         self.score_table = {}
-        self.reused = 0
-        self.evaluated = 0
+        self.sec_limit = 0
 
     def get_next_move(self, board: Board2048):
         best_movement, depth = None, 1
-        sec_limit = time.time() + self.max_sec
-        while time.time() < sec_limit:
-            best_movement, _ = self.expect_min_max(board, depth, True, None)
-            depth += 1
+        self.sec_limit = time.time() + self.max_sec
+        try:
+            while True:
+                best_movement, _ = self.expect_min_max(board, depth, True, None)
+                depth += 1
+        except TimeoutError:
+            pass
 
-        print(
-            "Depth: {}, Evaluated: {}, Re-used: {}, Percentage: {:.2f}".format(
-                depth,
-                self.evaluated,
-                self.reused,
-                (self.reused / self.evaluated) * 100
-            )
-        )
         self.score_table = {}
-        self.reused = 0
-        self.evaluated = 0
         return best_movement
 
     def expect_min_max(self, board: Board2048, depth: int, is_move: bool = True, move: int = None) -> (int, float):
         key = self.encode(board, depth)
+        if self.sec_limit < time.time():
+            raise TimeoutError()
 
         if depth == 0:
             if key in self.score_table:
-                self.reused += 1
                 return move, self.score_table[key]
             else:
                 fitness = board.get_fitness()
                 self.score_table[key] = fitness
-
-                self.evaluated += 1
                 return move, fitness
 
         elif is_move:
@@ -75,7 +65,7 @@ class IterativeDeepeningExpectMinMaxAi(AiAbc):
                 return None, mean_score
 
     def __repr__(self) -> str:
-        return "IterativeDeepeningExpectMinMaxAi(max_depth = {}, max_sec = {})".format(self.max_depth, self.max_sec)
+        return "IterativeDeepeningExpectMinMaxAi(max_sec = {})".format(self.max_sec)
 
     @staticmethod
     def encode(board: Board2048, depth: int):
