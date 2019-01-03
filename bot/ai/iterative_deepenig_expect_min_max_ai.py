@@ -7,7 +7,7 @@ INF = 100000000
 
 
 class IterativeDeepeningExpectMinMaxAi(AiAbc):
-    def __init__(self, max_sec: float = 1.0):
+    def __init__(self, max_sec: float = 0.1):
         super().__init__()
         self.max_sec = max_sec
         self.score_table = {}
@@ -18,7 +18,7 @@ class IterativeDeepeningExpectMinMaxAi(AiAbc):
         self.sec_limit = time.time() + self.max_sec
         try:
             while True:
-                best_movement, _ = self.expect_min_max(board, depth, True, None)
+                best_movement, _ = self.timed_expect_min_max(board, depth, True, None)
                 depth += 1
         except TimeoutError:
             pass
@@ -26,7 +26,7 @@ class IterativeDeepeningExpectMinMaxAi(AiAbc):
         self.score_table = {}
         return best_movement
 
-    def expect_min_max(self, board: Board2048, depth: int, is_move: bool = True, move: int = None) -> (int, float):
+    def timed_expect_min_max(self, board: Board2048, depth: int, is_move: bool = True, move: int = None) -> (int, float):
         key = self.encode(board, depth)
         if self.sec_limit < time.time():
             raise TimeoutError()
@@ -45,7 +45,7 @@ class IterativeDeepeningExpectMinMaxAi(AiAbc):
                 move_board = board.clone()
                 move_board.do_move(move, False)
                 if move_board.grid != board.grid:
-                    _, move_score = self.expect_min_max(move_board, depth, False, move)
+                    _, move_score = self.timed_expect_min_max(move_board, depth, False, move)
                     if move_score >= max_score:
                         max_score = move_score
                         max_move = move
@@ -60,7 +60,7 @@ class IterativeDeepeningExpectMinMaxAi(AiAbc):
                 for chance_move in chance_moves:
                     chance_board = board.clone()
                     chance_board.do_chance_move(chance_move)
-                    mean_score += chance_move[0] * self.expect_min_max(chance_board, depth - 1, True, None)[1]
+                    mean_score += chance_move[0] * self.timed_expect_min_max(chance_board, depth - 1, True, None)[1]
                 self.score_table[key] = mean_score
                 return None, mean_score
 
