@@ -9,5 +9,5 @@ from bot.ai.timed_monte_carlo_ai import TimedMonteCarloAi
 
 class TestTimedMonteCarloAi(unittest.TestCase):
     def test_monte_carlo_ai(self):
-        ai = TimedMonteCarloAi(max_runs=100, max_sec=0.01)
+        ai = TimedMonteCarloAi(max_sec=0.01)
         Benchmark.run(ai, max_secs=10)
