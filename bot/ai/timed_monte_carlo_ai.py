@@ -6,9 +6,8 @@ from bot.game.board_abc import BoardABC
 
 
 class TimedMonteCarloAi(AiAbc):
-    def __init__(self, max_runs: int = 200, max_sec: float = 0.5):
+    def __init__(self, max_sec: float = 0.5):
         super().__init__()
-        self.max_runs = max_runs
         self.max_sec = max_sec
 
     def get_next_move(self, board: BoardABC):
@@ -17,13 +16,13 @@ class TimedMonteCarloAi(AiAbc):
         return best_move
 
     def __repr__(self) -> str:
-        return "TimedMonteCarloAi(max_runs = {}, max_sec = {})".format(self.max_runs, self.max_sec)
+        return "TimedMonteCarloAi(max_sec = {})".format(self.max_sec)
 
     def run_random_games(self, board: BoardABC) -> {int: [int, int]}:
         results = {move: [0, 0] for move in board.get_moves()}
         runs, sec, start_time = 0, 0, time.time()
 
-        while runs < self.max_runs and sec < self.max_sec:
+        while sec < self.max_sec:
             initial_move = random.choice(board.get_moves())
             run_board = board.clone()
             run_board.do_move(initial_move, True)
