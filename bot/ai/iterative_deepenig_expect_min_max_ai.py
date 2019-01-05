@@ -5,7 +5,8 @@ from bot.game.board_2048 import Board2048
 
 INF = 10000000000
 
-
+# TODO: Check why it fails with:
+#  [[256, 128, 32, 8], [64, 32, 16, 4], [64, 8, 4, 2], [8, 8, 0, 0]]
 class IterativeDeepeningExpectMinMaxAi(AiAbc):
     def __init__(self, max_sec: float = 0.1):
         super().__init__()
@@ -14,7 +15,7 @@ class IterativeDeepeningExpectMinMaxAi(AiAbc):
         self.sec_limit = 0
 
     def get_next_move(self, board: Board2048):
-        best_movement, depth = None, 1
+        best_movement, depth = board.get_moves()[0], 1
         self.sec_limit = time.time() + self.max_sec
         try:
             while True:
