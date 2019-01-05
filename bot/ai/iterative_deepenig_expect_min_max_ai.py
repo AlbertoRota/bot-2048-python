@@ -3,9 +3,10 @@ import time
 from bot.ai.ai_abc import AiAbc
 from bot.game.board_2048 import Board2048
 
-INF = 100000000
+INF = 10000000000
 
-
+# TODO: Check why it fails with:
+#  [[256, 128, 32, 8], [64, 32, 16, 4], [64, 8, 4, 2], [8, 8, 0, 0]]
 class IterativeDeepeningExpectMinMaxAi(AiAbc):
     def __init__(self, max_sec: float = 0.1):
         super().__init__()
@@ -14,7 +15,7 @@ class IterativeDeepeningExpectMinMaxAi(AiAbc):
         self.sec_limit = 0
 
     def get_next_move(self, board: Board2048):
-        best_movement, depth = None, 1
+        best_movement, depth = board.get_moves()[0], 1
         self.sec_limit = time.time() + self.max_sec
         try:
             while True:
@@ -32,6 +33,7 @@ class IterativeDeepeningExpectMinMaxAi(AiAbc):
             raise TimeoutError()
 
         if depth == 0:
+            # Leaf node reached, run evaluation function
             if key in self.score_table:
                 return move, self.score_table[key]
             else:
@@ -40,6 +42,7 @@ class IterativeDeepeningExpectMinMaxAi(AiAbc):
                 return move, fitness
 
         elif is_move:
+            # Move node, pick the best move.
             max_move, max_score = None, -INF
             for move in Board2048.ALL_MOVES:
                 move_board = board.clone()
@@ -52,6 +55,7 @@ class IterativeDeepeningExpectMinMaxAi(AiAbc):
             return max_move, max_score
 
         else:
+            # Chance node, calculate the average.
             if key in self.score_table:
                 return None, self.score_table[key]
             else:

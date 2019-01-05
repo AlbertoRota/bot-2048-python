@@ -1,7 +1,7 @@
 from bot.ai.ai_abc import AiAbc
 from bot.game.board_2048 import Board2048
 
-INF = 100000000
+INF = 10000000000
 
 
 class SimpleExpectMinMaxAi(AiAbc):
@@ -13,12 +13,13 @@ class SimpleExpectMinMaxAi(AiAbc):
         self.score_table = {}
 
     def get_next_move(self, board: Board2048):
-        best_movement, _ = self.expect_min_max(board, self.depth, True, None)
+        best_movement, _ = self.simple_expect_min_max(board, self.depth, True, None)
         self.score_table = {}
         return best_movement
 
-    def expect_min_max(self, board: Board2048, depth: int, is_move: bool = True, move: int = None) -> (int, float):
+    def simple_expect_min_max(self, board: Board2048, depth: int, is_move: bool = True, move: int = None) -> (int, float):
         if depth == 0:
+            # Leaf node reached, run evaluation function
             key = self.encode(board, depth)
             if key in self.score_table:
                 return move, self.score_table[key]
@@ -28,18 +29,20 @@ class SimpleExpectMinMaxAi(AiAbc):
                 return move, fitness
 
         elif is_move:
+            # Move node, pick the best move.
             max_move, max_score = None, -INF
             for move in Board2048.ALL_MOVES:
                 move_board = board.clone()
                 move_board.do_move(move, False)
                 if move_board.grid != board.grid:
-                    _, move_score = self.expect_min_max(move_board, depth, False, move)
+                    _, move_score = self.simple_expect_min_max(move_board, depth, False, move)
                     if move_score >= max_score:
                         max_score = move_score
                         max_move = move
             return max_move, max_score
 
         else:
+            # Chance node, calculate the average.
             key = self.encode(board, depth)
             if key in self.score_table:
                 return None, self.score_table[key]
@@ -52,7 +55,7 @@ class SimpleExpectMinMaxAi(AiAbc):
                         acc_chance += chance_move[0]
                         chance_board = board.clone()
                         chance_board.do_chance_move(chance_move)
-                        mean_score += chance_move[0] * self.expect_min_max(chance_board, depth - 1, True)[1]
+                        mean_score += chance_move[0] * self.simple_expect_min_max(chance_board, depth - 1, True)[1]
                     i += 1
                 mean_score /= acc_chance
                 self.score_table[key] = mean_score
