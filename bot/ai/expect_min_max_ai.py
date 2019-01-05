@@ -1,7 +1,7 @@
 from bot.ai.ai_abc import AiAbc
 from bot.game.board_2048 import Board2048
 
-INF = 100000000
+INF = 10000000000
 
 
 class ExpectMinMaxAi(AiAbc):
@@ -17,6 +17,7 @@ class ExpectMinMaxAi(AiAbc):
 
     def expect_min_max(self, board: Board2048, depth: int, is_move: bool = True, move: int = None) -> (int, float):
         if depth == 0:
+            # Leaf node reached, run evaluation function
             key = self.encode(board, depth)
             if key in self.score_table:
                 return move, self.score_table[key]
@@ -26,6 +27,7 @@ class ExpectMinMaxAi(AiAbc):
                 return move, fitness
 
         elif is_move:
+            # Move node, pick the best move.
             max_move, max_score = None, -INF
             for move in Board2048.ALL_MOVES:
                 move_board = board.clone()
@@ -38,6 +40,7 @@ class ExpectMinMaxAi(AiAbc):
             return max_move, max_score
 
         else:
+            # Chance node, calculate the average.
             key = self.encode(board, depth)
             if key in self.score_table:
                 return None, self.score_table[key]
