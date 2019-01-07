@@ -6,30 +6,19 @@ from bot.game.board_2048 import Board2048
 INF = 10000000000
 
 
-class IterativeDeepeningMinMaxAi(AiAbc):
-    def __init__(self, max_sec: float = 0.1):
+class MinMaxAi(AiAbc):
+    def __init__(self, search_depth: int = 3):
         super().__init__()
-        self.max_sec = max_sec
+        self.depth = search_depth
         self.score_table = {}
-        self.sec_limit = 0
 
     def get_next_move(self, board: Board2048):
-        best_movement, depth = board.get_moves()[0], 1
-        self.sec_limit = time.time() + self.max_sec
-        try:
-            while True:
-                best_movement, _ = self.timed_min_max(board, depth, is_move=True)
-                depth += 1
-        except TimeoutError:
-            pass
+        best_movement, _ = self.min_max(board, self.depth, is_move=True)
         self.score_table = {}
         return best_movement
 
-    def timed_min_max(self, board: Board2048, depth: int, alpha: float = -INF, beta: float = INF, is_move: bool = True) -> (int, float):
+    def min_max(self, board: Board2048, depth: int, alpha: float = -INF, beta: float = INF, is_move: bool = True) -> (int, float):
         key = self.encode(board, depth)
-        if self.sec_limit < time.time():
-            raise TimeoutError()
-
         if depth == 0:
             # Leaf node reached, run evaluation function
             if key in self.score_table:
@@ -46,7 +35,7 @@ class IterativeDeepeningMinMaxAi(AiAbc):
                 move_board = board.clone()
                 move_board.do_move(move, False)
                 if move_board.grid != board.grid:
-                    _, move_score = self.timed_min_max(move_board, depth, alpha, beta, False)
+                    _, move_score = self.min_max(move_board, depth, alpha, beta, False)
                     if move_score >= max_score:
                         max_score = move_score
                         max_move = move
@@ -66,7 +55,7 @@ class IterativeDeepeningMinMaxAi(AiAbc):
                 for move in chance_moves:
                     move_board = board.clone()
                     move_board.do_chance_move(move)
-                    _, move_score = self.timed_min_max(move_board, depth - 1, alpha, beta, True)
+                    _, move_score = self.min_max(move_board, depth - 1, alpha, beta, True)
                     if move_score <= min_score:
                         min_score = move_score
 
@@ -77,7 +66,7 @@ class IterativeDeepeningMinMaxAi(AiAbc):
                 return None, min_score
 
     def __repr__(self) -> str:
-        return "IterativeDeepeningMinMaxAi(max_sec = {})".format(self.max_sec)
+        return "MinMaxAi(depth = {})".format(self.depth)
 
     @staticmethod
     def encode(board: Board2048, depth: int):
