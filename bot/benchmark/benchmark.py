@@ -45,7 +45,7 @@ class Benchmark(object):
             runs, secs, acc_score / runs, acc_moves / runs, acc_moves / secs
         ))
         for number, times in sorted(max_tiles.items()):
-            print(str(number) + ": " + str(times) + " - ({0:.2f}%)".format((times/runs)*100))
+            print(str(2 ** number) + ": " + str(times) + " - ({0:.2f}%)".format((times/runs)*100))
         print(flush=True)
 
     @staticmethod
