@@ -15,6 +15,7 @@ class Row:
         self.smoothness_fitness = Fitness2048.eval_row_smoothness(row)
         self.zeroes_fitness = 4 - len(self.zeroes)
 
+    # TODO: Refactor to avoid the duplication of this method
     @staticmethod
     def swipe_row_left(row: [int]) -> ([int], int):
         last_non_zero = -1
@@ -25,9 +26,9 @@ class Row:
         for cell in row:
             if cell != 0:
                 if cell == last_non_zero:
-                    new_tile = last_non_zero + cell
+                    new_tile = last_non_zero + 1
                     new_row[first_free_cell - 1] = new_tile
-                    score_inc += new_tile
+                    score_inc += 2 ** new_tile
                     last_non_zero = -1
                 else:
                     last_non_zero = cell

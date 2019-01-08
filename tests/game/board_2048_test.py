@@ -7,58 +7,59 @@ from bot.game.board_2048 import Board2048
 
 
 class TestGameMethods(unittest.TestCase):
+    # TODO: Ensure that we are testing the right method (This one is duplicated)
     def test_swipe_row_left(self):
         self.assertEqual(
-            Board2048.swipe_row_left([2, 2, 0, 0]),
-            ([4, 0, 0, 0], 4)
+            Board2048.swipe_row_left([1, 1, 0, 0]),
+            ([2, 0, 0, 0], 4)
         )
         self.assertEqual(
             Board2048.swipe_row_left([0, 0, 0, 0]),
             ([0, 0, 0, 0], 0)
         )
         self.assertEqual(Board2048.swipe_row_left(
-            [2, 4, 0, 0]),
-            ([2, 4, 0, 0], 0)
+            [1, 2, 0, 0]),
+            ([1, 2, 0, 0], 0)
         )
         self.assertEqual(
-            Board2048.swipe_row_left([8, 0, 0, 8]),
-            ([16, 0, 0, 0], 16)
+            Board2048.swipe_row_left([3, 0, 0, 3]),
+            ([4, 0, 0, 0], 16)
         )
         self.assertEqual(
-            Board2048.swipe_row_left([2, 2, 4, 8]),
-            ([4, 4, 8, 0], 4)
+            Board2048.swipe_row_left([1, 1, 2, 3]),
+            ([2, 2, 3, 0], 4)
         )
 
     def test_swipe_grid(self):
         board_2048_4x4 = Board2048([
-            [2, 2, 0, 0],
+            [1, 1, 0, 0],
             [0, 0, 0, 0],
-            [2, 4, 0, 0],
-            [2, 2, 4, 8]
+            [1, 2, 0, 0],
+            [1, 1, 2, 3]
         ])
         expected_4x4 = {
             Board2048.MOVE_LEFT:    ([
-                                         [4, 0, 0, 0],
+                                         [2, 0, 0, 0],
                                          [0, 0, 0, 0],
-                                         [2, 4, 0, 0],
-                                         [4, 4, 8, 0]
+                                         [1, 2, 0, 0],
+                                         [2, 2, 3, 0]
                                      ], 8),
             Board2048.MOVE_RIGHT:   ([
-                                         [0, 0, 0, 4],
+                                         [0, 0, 0, 2],
                                          [0, 0, 0, 0],
-                                         [0, 0, 2, 4],
-                                         [0, 4, 4, 8]
+                                         [0, 0, 1, 2],
+                                         [0, 2, 2, 3]
                                      ], 8),
             Board2048.MOVE_DOWN:    ([
                                          [0, 0, 0, 0],
-                                         [0, 2, 0, 0],
-                                         [2, 4, 0, 0],
-                                         [4, 2, 4, 8]
+                                         [0, 1, 0, 0],
+                                         [1, 2, 0, 0],
+                                         [2, 1, 2, 3]
                                      ], 4),
             Board2048.MOVE_UP:      ([
-                                         [4, 2, 4, 8],
-                                         [2, 4, 0, 0],
-                                         [0, 2, 0, 0],
+                                         [2, 1, 2, 3],
+                                         [1, 2, 0, 0],
+                                         [0, 1, 0, 0],
                                          [0, 0, 0, 0]
                                      ], 4)
         }

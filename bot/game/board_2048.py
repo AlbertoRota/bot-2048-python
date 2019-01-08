@@ -1,7 +1,6 @@
 import random
 
 from bot.game.board_abc import BoardABC
-from bot.fitness.fitness_2048 import Fitness2048
 from bot.tables.row import Row
 
 
@@ -33,8 +32,8 @@ class Board2048(BoardABC):
 
     @staticmethod
     def init_move_table():
-        values = [0] + [2 ** x for x in range(1, 16)]
-        max_cell = values[len(values) - 1]
+        max_cell = 15
+        values = range(max_cell + 1)
 
         idx = 0
         for cell_1 in values:
@@ -113,7 +112,7 @@ class Board2048(BoardABC):
         grid = self.grid
         zero_list = [(i, j) for i, row in enumerate(grid) for j, cell in enumerate(row) if cell == 0]
         num_zeros = len(zero_list)
-        return [(chance / num_zeros, (i, j), val) for i, j in zero_list for chance, val in [(0.9, 2), (0.1, 4)]]
+        return [(chance / num_zeros, (i, j), val) for i, j in zero_list for chance, val in [(0.9, 1), (0.1, 2)]]
 
     def get_result(self) -> float:
         return self.score
@@ -152,7 +151,7 @@ class Board2048(BoardABC):
         )
 
     def spawn_tile(self):
-        tile_distribution = [2] * 9 + [4]
+        tile_distribution = [1] * 9 + [2]
         tile_to_spawn = tile_distribution[int(len(tile_distribution) * random.random())]
 
         grid = self.grid
@@ -205,6 +204,7 @@ class Board2048(BoardABC):
             [g[0][0], g[1][0], g[2][0], g[3][0]]
         ]
 
+    # TODO: Refactor to avoid the duplication of this method
     @staticmethod
     def swipe_row_left(row: [int]) -> ([int], int):
         last_non_zero = -1
@@ -215,9 +215,9 @@ class Board2048(BoardABC):
         for cell in row:
             if cell != 0:
                 if cell == last_non_zero:
-                    new_tile = last_non_zero + cell
+                    new_tile = last_non_zero + 1
                     new_row[first_free_cell - 1] = new_tile
-                    score_inc += new_tile
+                    score_inc += 2 ** new_tile
                     last_non_zero = -1
                 else:
                     last_non_zero = cell
