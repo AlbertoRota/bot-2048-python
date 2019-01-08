@@ -45,3 +45,12 @@ class Fitness2048:
                 if cell == 0:
                     free += 1
         return -(grid_cells - free) ** 2
+
+    @staticmethod
+    def eval_snake(grid):
+        snake = []
+        for i, col in enumerate(zip(*grid)):
+            snake.extend(reversed(col) if i % 2 == 0 else col)
+
+        m = max(snake)
+        return sum(x / 10 ** n for n, x in enumerate(snake)) - ((grid[3][0] != m) * abs(grid[3][0] - m)) ** 2

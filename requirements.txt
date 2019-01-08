@@ -1,3 +1,5 @@
+deap
+numpy
 snakeviz >= 1.0.0
 pytest >= 4.0.2
 Pillow >= 5.0.3

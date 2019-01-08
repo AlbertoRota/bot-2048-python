@@ -5,6 +5,13 @@ from bot.fitness.fitness_2048 import Fitness2048
 from bot.tables.row import Row
 
 
+def protected_div(left, right):
+    try:
+        return left / right
+    except ZeroDivisionError:
+        return 1
+
+
 class Board2048(BoardABC):
     MOVE_LEFT, MOVE_DOWN, MOVE_RIGHT, MOVE_UP = 0, 1, 2, 3
     ALL_MOVES = (MOVE_LEFT, MOVE_DOWN, MOVE_RIGHT, MOVE_UP)
@@ -113,36 +120,62 @@ class Board2048(BoardABC):
         grid = self.grid
         zero_list = [(i, j) for i, row in enumerate(grid) for j, cell in enumerate(row) if cell == 0]
         num_zeros = len(zero_list)
-        return [(chance / num_zeros, (i, j), val) for i, j in zero_list for chance, val in [(0.9, 2), (0.1, 4)]]
+        return [(chance / num_zeros, (i, j), val) for i, j in zero_list for chance, val in [(1, 2)]] # [(0.9, 2), (0.1, 4)]]
 
     def get_result(self) -> float:
         return self.score
 
     def get_fitness(self) -> float:
         if not self.cached_fitness:
-            score_monotone_lr = 0
-            score_smoothness_lr = 0
-            score_free_row = 0
-            for row in self.grid:
-                table_row = Board2048.move_table[tuple(row)]
-                score_monotone_lr += table_row.monotone_fitness
-                score_smoothness_lr += table_row.smoothness_fitness
-                score_free_row += table_row.zeroes_fitness
+            # self.cached_fitness = Fitness2048.eval_snake(self.grid)
 
-            score_monotone_ud = 0
-            score_smoothness_ud = 0
-            for column in self.rot_270(self.grid):
-                table_column = Board2048.move_table[tuple(column)]
-                score_monotone_ud += table_column.monotone_fitness
-                score_smoothness_ud += table_column.smoothness_fitness
+            score_free, score_monotone_lr, score_monotone_ud, score_smoothness_lr, score_smoothness_ud = self.get_raw_fitness()
 
-            score_monotone = score_monotone_lr + score_monotone_ud
-            score_smoothness = (score_smoothness_lr + score_smoothness_ud) / 8
-            score_free = -score_free_row ** 2
+            # self.cached_fitness = min(score_smoothness_lr, score_monotone_ud) + score_monotone_ud
+            self.cached_fitness = min(score_smoothness_lr, max(protected_div(score_monotone_ud, score_smoothness_lr), score_monotone_ud)) + max(score_monotone_ud, score_smoothness_lr)
 
-            self.cached_fitness = score_free + score_monotone + score_smoothness
+            # score_monotone_lr = 0
+            # score_smoothness_lr = 0
+            # score_free_row = 0
+            # for row in self.grid:
+            #     table_row = Board2048.move_table[tuple(row)]
+            #     score_monotone_lr += table_row.monotone_fitness
+            #     score_smoothness_lr += table_row.smoothness_fitness
+            #     score_free_row += table_row.zeroes_fitness
+            #
+            # score_monotone_ud = 0
+            # score_smoothness_ud = 0
+            # for column in self.rot_270(self.grid):
+            #     table_column = Board2048.move_table[tuple(column)]
+            #     score_monotone_ud += table_column.monotone_fitness
+            #     score_smoothness_ud += table_column.smoothness_fitness
+            #
+            # score_monotone = score_monotone_lr + score_monotone_ud
+            # score_smoothness = (score_smoothness_lr + score_smoothness_ud) / 8
+            # score_free = -score_free_row ** 2
+            #
+            # self.cached_fitness = score_free + score_monotone + score_smoothness
 
         return self.cached_fitness
+
+    def get_raw_fitness(self) -> (float, float, float, float, float):
+        score_monotone_lr = 0
+        score_smoothness_lr = 0
+        score_free = 0
+        for row in self.grid:
+            table_row = Board2048.move_table[tuple(row)]
+            score_monotone_lr += table_row.monotone_fitness
+            score_smoothness_lr += table_row.smoothness_fitness
+            score_free += table_row.zeroes_fitness
+
+        score_monotone_ud = 0
+        score_smoothness_ud = 0
+        for column in self.rot_270(self.grid):
+            table_column = Board2048.move_table[tuple(column)]
+            score_monotone_ud += table_column.monotone_fitness
+            score_smoothness_ud += table_column.smoothness_fitness
+
+        return score_free, score_monotone_lr, score_monotone_ud, score_smoothness_lr, score_smoothness_ud
 
     def __repr__(self) -> str:
         return "Grid: {}\nValid moves: {}\nScore: {}".format(

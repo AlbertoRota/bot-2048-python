@@ -1,6 +1,6 @@
 import operator
-import math
 import random
+import multiprocessing
 
 import numpy
 
@@ -9,6 +9,9 @@ from deap import base
 from deap import creator
 from deap import tools
 from deap import gp
+
+from bot.evo.evo_simple_expect_min_max_ai import SimpleExpectMinMaxAi
+from bot.evo.evo_benchmark import Benchmark
 
 
 # Define new functions
@@ -19,16 +22,28 @@ def protectedDiv(left, right):
         return 1
 
 
-pset = gp.PrimitiveSet("MAIN", 1)
+pset = gp.PrimitiveSet("MAIN", 5)
+
 pset.addPrimitive(operator.add, 2)
 pset.addPrimitive(operator.sub, 2)
+
 pset.addPrimitive(operator.mul, 2)
 pset.addPrimitive(protectedDiv, 2)
+
+pset.addPrimitive(max, 2)
+pset.addPrimitive(min, 2)
+
 pset.addPrimitive(operator.neg, 1)
-pset.addPrimitive(math.cos, 1)
-pset.addPrimitive(math.sin, 1)
-pset.addEphemeralConstant("rand101", lambda: random.randint(-1, 1))
-pset.renameArguments(ARG0='x')
+pset.addPrimitive(operator.abs, 1)
+
+pset.addEphemeralConstant("rand32", lambda: random.randint(-32, 32))
+pset.renameArguments(
+    ARG0='score_free',
+    ARG1='score_monotone_lr',
+    ARG2='score_monotone_ud',
+    ARG3='score_smoothness_lr',
+    ARG4='score_smoothness_ud'
+)
 
 creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
 creator.create("Individual", gp.PrimitiveTree, fitness=creator.FitnessMin)
@@ -40,16 +55,21 @@ toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 toolbox.register("compile", gp.compile, pset=pset)
 
 
-def evalSymbReg(individual, points):
+def target_func(x, y):
+    return y * x ** 4 + 7 * y * x ** 3 + x ** 2 + x * y ** 3
+
+
+def eval_symb_reg(individual, points):
     # Transform the tree expression in a callable function
     func = toolbox.compile(expr=individual)
-    # Evaluate the mean squared error between the expression
-    # and the real function : x**4 + x**3 + x**2 + x
-    sqerrors = ((func(x) - x ** 4 - x ** 3 - x ** 2 - x) ** 2 for x in points)
-    return math.fsum(sqerrors) / len(points),
+
+    # Evaluate
+    ai = SimpleExpectMinMaxAi(eval_func=func)
+    fitness = Benchmark.run(ai)
+    return 30000 / fitness,
 
 
-toolbox.register("evaluate", evalSymbReg, points=[x / 10. for x in range(-10, 10)])
+toolbox.register("evaluate", eval_symb_reg, points=[x / 10. for x in range(-10, 10)])
 toolbox.register("select", tools.selTournament, tournsize=3)
 toolbox.register("mate", gp.cxOnePoint)
 toolbox.register("expr_mut", gp.genFull, min_=0, max_=2)
@@ -62,7 +82,7 @@ toolbox.decorate("mutate", gp.staticLimit(key=operator.attrgetter("height"), max
 def main():
     # random.seed(318)
 
-    pop = toolbox.population(n=300)
+    pop = toolbox.population(n=20)
     hof = tools.HallOfFame(1)
 
     stats_fit = tools.Statistics(lambda ind: ind.fitness.values)
@@ -73,11 +93,14 @@ def main():
     mstats.register("min", numpy.min)
     mstats.register("max", numpy.max)
 
-    pop, log = algorithms.eaSimple(pop, toolbox, 0.5, 0.1, 40, stats=mstats, halloffame=hof, verbose=True)
+    pop, log = algorithms.eaSimple(pop, toolbox, 0.5, 0.1, 15, stats=mstats, halloffame=hof, verbose=True)
     # print log
-    print(hof[0])
+    for individual in hof:
+        print(individual)
     return pop, log, hof
 
 
 if __name__ == "__main__":
+    pool = multiprocessing.Pool(multiprocessing.cpu_count() - 1)
+    toolbox.register("map", pool.map)
     main()
