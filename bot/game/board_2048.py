@@ -11,8 +11,8 @@ class Board2048(BoardABC):
 
     idx_to_row = []
     row_to_idx = {}
-    move_table = {}
-    fitness_table = {}
+    move_table = MoveTable.get_move_table()
+    fitness_table = FitnessTable.get_fitness_table()
     move_table_grid_size = 0
 
     def __init__(self, grid: [[int]] = None, initialize: bool = False, score: int = 0):
@@ -25,12 +25,6 @@ class Board2048(BoardABC):
             self.spawn_tile()
 
         self.score = score
-
-        if not Board2048.move_table:
-            Board2048.move_table = MoveTable.get_move_table()
-
-        if not Board2048.fitness_table:
-            Board2048.fitness_table = FitnessTable.get_fitness_table()
 
         self.cached_moves = None
         self.cached_fitness = None
