@@ -7,29 +7,6 @@ from bot.game.board_2048 import Board2048
 
 
 class TestGameMethods(unittest.TestCase):
-    # TODO: Ensure that we are testing the right method (This one is duplicated)
-    def test_swipe_row_left(self):
-        self.assertEqual(
-            Board2048.swipe_row_left([1, 1, 0, 0]),
-            ([2, 0, 0, 0], 4)
-        )
-        self.assertEqual(
-            Board2048.swipe_row_left([0, 0, 0, 0]),
-            ([0, 0, 0, 0], 0)
-        )
-        self.assertEqual(Board2048.swipe_row_left(
-            [1, 2, 0, 0]),
-            ([1, 2, 0, 0], 0)
-        )
-        self.assertEqual(
-            Board2048.swipe_row_left([3, 0, 0, 3]),
-            ([4, 0, 0, 0], 16)
-        )
-        self.assertEqual(
-            Board2048.swipe_row_left([1, 1, 2, 3]),
-            ([2, 2, 3, 0], 4)
-        )
-
     def test_swipe_grid(self):
         board_2048_4x4 = Board2048([
             [1, 1, 0, 0],

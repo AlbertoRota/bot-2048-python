@@ -1,7 +1,8 @@
 import random
 
 from bot.game.board_abc import BoardABC
-from bot.tables.row import Row
+from bot.tables.move_table import MoveTable
+from bot.tables.fitness_table import FitnessTable
 
 
 class Board2048(BoardABC):
@@ -11,6 +12,7 @@ class Board2048(BoardABC):
     idx_to_row = []
     row_to_idx = {}
     move_table = {}
+    fitness_table = {}
     move_table_grid_size = 0
 
     def __init__(self, grid: [[int]] = None, initialize: bool = False, score: int = 0):
@@ -25,33 +27,13 @@ class Board2048(BoardABC):
         self.score = score
 
         if not Board2048.move_table:
-            Board2048.init_move_table()
+            Board2048.move_table = MoveTable.get_move_table()
+
+        if not Board2048.fitness_table:
+            Board2048.fitness_table = FitnessTable.get_fitness_table()
 
         self.cached_moves = None
         self.cached_fitness = None
-
-    @staticmethod
-    def init_move_table():
-        max_cell = 15
-        values = range(max_cell + 1)
-
-        idx = 0
-        for cell_1 in values:
-            for cell_2 in values:
-                for cell_3 in values:
-                    for cell_4 in values:
-                        row = cell_1, cell_2, cell_3, cell_4
-                        Board2048.idx_to_row.append(row)
-                        Board2048.row_to_idx[row] = idx
-                        idx += 1
-
-        for idx, row in enumerate(Board2048.idx_to_row):
-            row_moved = tuple(Board2048.swipe_row_left(row))
-            if max(row_moved[0]) > max_cell:
-                Board2048.move_table[idx] = -1
-            else:
-                Board2048.move_table[idx] = Board2048.row_to_idx[tuple(row_moved[0])]
-                Board2048.move_table[row] = Row(row)
 
     def clone(self) -> "Board2048":
         return Board2048(grid=self.grid.copy(), score=self.score)
@@ -62,7 +44,7 @@ class Board2048(BoardABC):
             aux = Board2048.move_table[tuple(row)]
             moved_row = aux.moved_left
             score_inc = aux.score_left
-            self.grid[i] = moved_row.copy()
+            self.grid[i] = [x for x in moved_row]
             self.score += score_inc
         self.grid = self.rotate_grid(4 - move)
 
@@ -119,27 +101,16 @@ class Board2048(BoardABC):
 
     def get_fitness(self) -> float:
         if not self.cached_fitness:
-            score_monotone_lr = 0
-            score_smoothness_lr = 0
-            score_free_row = 0
+            fitness = 0
             for row in self.grid:
-                table_row = Board2048.move_table[tuple(row)]
-                score_monotone_lr += table_row.monotone_fitness
-                score_smoothness_lr += table_row.smoothness_fitness
-                score_free_row += table_row.zeroes_fitness
+                fitness_table_entry = Board2048.fitness_table[tuple(row)]
+                fitness += fitness_table_entry.fitness
 
-            score_monotone_ud = 0
-            score_smoothness_ud = 0
-            for column in self.rot_270(self.grid):
-                table_column = Board2048.move_table[tuple(column)]
-                score_monotone_ud += table_column.monotone_fitness
-                score_smoothness_ud += table_column.smoothness_fitness
+            for col in self.rot_270(self.grid):
+                fitness_table_entry = Board2048.fitness_table[tuple(col)]
+                fitness += fitness_table_entry.fitness
 
-            score_monotone = score_monotone_lr + score_monotone_ud
-            score_smoothness = (score_smoothness_lr + score_smoothness_ud) / 8
-            score_free = -score_free_row ** 2
-
-            self.cached_fitness = score_free + score_monotone + score_smoothness
+            self.cached_fitness = fitness
 
         return self.cached_fitness
 
@@ -203,24 +174,3 @@ class Board2048(BoardABC):
             [g[0][1], g[1][1], g[2][1], g[3][1]],
             [g[0][0], g[1][0], g[2][0], g[3][0]]
         ]
-
-    # TODO: Refactor to avoid the duplication of this method
-    @staticmethod
-    def swipe_row_left(row: [int]) -> ([int], int):
-        last_non_zero = -1
-        first_free_cell = 0
-        new_row = [0] * len(row)
-        score_inc = 0
-
-        for cell in row:
-            if cell != 0:
-                if cell == last_non_zero:
-                    new_tile = last_non_zero + 1
-                    new_row[first_free_cell - 1] = new_tile
-                    score_inc += 2 ** new_tile
-                    last_non_zero = -1
-                else:
-                    last_non_zero = cell
-                    new_row[first_free_cell] = cell
-                    first_free_cell += 1
-        return new_row, score_inc
