@@ -1,3 +1,5 @@
+import random
+
 from bot.tables.move_table import MoveTable
 from bot.tables.fitness_table import FitnessTable
 
@@ -10,8 +12,25 @@ ALL_MOVES = (MOVE_LEFT, MOVE_DOWN, MOVE_RIGHT, MOVE_UP)
 def do_move(grid: [[int]], move: int):
     rotated_grid = rotate_grid(grid, move)
     for i, row in enumerate(rotated_grid):
-        grid[i] = move_table[tuple(row)]
-    return rotate_grid(grid, 4 - move)
+        rotated_grid[i] = list(move_table[tuple(row)])
+    return rotate_grid(rotated_grid, 4 - move)
+
+
+def get_moves(grid: [[int]]) -> [int]:
+    return [move for move in ALL_MOVES if do_move(grid, move) != grid]
+
+
+def spawn_tile(grid: [[int]]):
+    tile_distribution = [1] * 9 + [2]
+    tile_to_spawn = tile_distribution[int(len(tile_distribution) * random.random())]
+
+    grid = grid.copy()
+    zero_list = [(i, j) for i, row in enumerate(grid) for j, cell in enumerate(row) if cell == 0]
+
+    chosen_zero = zero_list[int(len(zero_list) * random.random())]
+    grid[chosen_zero[0]][chosen_zero[1]] = tile_to_spawn
+
+    return grid
 
 
 def rotate_grid(grid: [[int]], times: int) -> [[int]]:
