@@ -1,5 +1,6 @@
 class MoveTable:
     move_table = {}
+    simple_move_table = {}
 
     def __init__(self):
         raise NotImplementedError("This class should NOT be instantiated, use the static method \"get_move_table()\"")
@@ -12,10 +13,18 @@ class MoveTable:
         return MoveTable.move_table
 
     @staticmethod
+    def get_simple_move_table() -> {}:
+        if not MoveTable.simple_move_table:
+            MoveTable.init_move_table()
+
+        return MoveTable.simple_move_table
+
+    @staticmethod
     def init_move_table():
         max_cell = 16
         values = range(max_cell + 1)
         move_table = MoveTable.move_table
+        simple_move_table = MoveTable.simple_move_table
 
         for cell_1 in values:
             for cell_2 in values:
@@ -23,6 +32,7 @@ class MoveTable:
                     for cell_4 in values:
                         row = cell_1, cell_2, cell_3, cell_4
                         move_table[row] = MoveTableEntry(row)
+                        simple_move_table[row] = move_table[row].moved_left
 
 
 class MoveTableEntry:
