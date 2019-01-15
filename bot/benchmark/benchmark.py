@@ -58,7 +58,7 @@ class Benchmark(object):
         while board.get_moves():
             board.do_move(ai.get_next_move(board), spawn_tile=True)
             num_of_movements += 1
-            print("Board: {} - Score: {}".format(board.grid, board.get_result()))
+            # print("Board: {} - Score: {}".format(board.grid, board.get_result()))
 
         # Return relevant info
         return board, num_of_movements
