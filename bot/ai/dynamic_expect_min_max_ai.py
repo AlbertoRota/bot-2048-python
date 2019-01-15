@@ -9,8 +9,8 @@ class DynamicExpectMinMaxAi(AiAbc):
         super().__init__()
         self.min_search_depth = 3
         self.depth_limit = 3
-        self.min_cprob = 0.0001
-        self.cache_depth_limit = 15
+        self.min_cprob = 0.005
+        self.cache_depth_limit = 8
         self.score_table = {}
 
     def get_next_move(self, board: Board2048):
@@ -21,7 +21,7 @@ class DynamicExpectMinMaxAi(AiAbc):
         best_movement, best_score = None, 0
         self.score_table = {}
         self.depth_limit = max(3, self.count_distinct_tiles(board) - 2)
-        self.depth_limit = self.depth_limit // 2 + 1
+        self.depth_limit = self.depth_limit
         for move in valid_movements:
             move_score = self.score_toplevel_move(board, move)
             if move_score >= best_score:
